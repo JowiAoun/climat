@@ -81,7 +81,7 @@ if it were a feature list is the thing this project is trying not to be.
   and a window that can be hidden.
 
 - **No translations.** Every string is marked and the catalogue is kept current
-  by CI (312 of them), and not one language has been translated. A machine
+  by CI (322 of them), and not one language has been translated. A machine
   translation would be worse than none.
 - **The widgets have never been pinned on a KDE session.** They pin themselves
   on GNOME, which was measured by hand, and on wlroots, which is measured in CI
