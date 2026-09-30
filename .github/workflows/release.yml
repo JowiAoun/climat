@@ -201,6 +201,9 @@ jobs:
           modules: 'qtpositioning'
           cache: true
 
+      - name: Version
+        run: bash scripts/release-version.sh >> "$GITHUB_ENV"
+
       - name: Install linuxdeploy
         run: |
           mkdir -p tools
@@ -255,6 +258,10 @@ jobs:
             --output appimage \
             --desktop-file AppDir/usr/share/applications/io.github.JowiAoun.Climat.desktop \
             --icon-file packaging/icons/climat-256.png
+          # linuxdeploy names the file after the desktop entry, Climat-x86_64,
+          # with no version. 0.1.0 shipped under that name; every artefact
+          # after it is named the way the others are.
+          mv Climat*-x86_64.AppImage "climat-$CLIMAT_RELEASE_VERSION-x86_64.AppImage"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
