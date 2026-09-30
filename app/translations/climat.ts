@@ -829,15 +829,15 @@
 <context>
     <name>MapPlaceholder</name>
     <message>
-        <source>No map component yet</source>
+        <source>No map yet</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Nothing on this screen is a map. The radar view is MapLibre Native over a vector basemap - decision D4 in docs/03-tech-stack.md - and this panel stands in for it so the shell can be reviewed with all five tabs present.</source>
+        <source>A radar map belongs on this tab, and it is not built yet. Until then, the Hourly tab shows when rain is coming.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PLACEHOLDER</source>
+        <source>NOT BUILT YET</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

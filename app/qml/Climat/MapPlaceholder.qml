@@ -100,7 +100,7 @@ Item {
         }
 
         Text {
-            text: qsTr("No map component yet")
+            text: qsTr("No map yet")
             color: Theme.ink.primary
             font.pixelSize: Theme.type.cardTitle
             font.bold: true
@@ -108,10 +108,11 @@ Item {
         }
 
         Text {
-            text: qsTr("Nothing on this screen is a map. The radar view is "
-                     + "MapLibre Native over a vector basemap - decision D4 in "
-                     + "docs/03-tech-stack.md - and this panel stands in for it "
-                     + "so the shell can be reviewed with all five tabs present.")
+            // Written for the person holding the phone. The panel is for them
+            // as much as for a reviewer, and a store build puts it in front of
+            // them, so it names no file and no decision number.
+            text: qsTr("A radar map belongs on this tab, and it is not built yet. "
+                     + "Until then, the Hourly tab shows when rain is coming.")
             color: Theme.ink.muted
             font.pixelSize: Theme.type.body
             wrapMode: Text.WordWrap
@@ -132,7 +133,7 @@ Item {
 
             Text {
                 id: chip
-                text: qsTr("PLACEHOLDER")
+                text: qsTr("NOT BUILT YET")
                 color: Theme.scaffold.ink
                 font.pixelSize: Theme.type.axis
                 font.bold: true
