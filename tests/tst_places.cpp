@@ -333,9 +333,18 @@ void TestPlaces::settingHomeMovesItAndOnlyOnePlaceIsEverHome()
     // and a model that got the write order wrong would have failed the write
     // rather than produced two homes.
     int homes = 0;
-    for (const Place &saved : store.places().value())
+    QStringList stored;
+    for (const Place &saved : store.places().value()) {
         homes += saved.isHome ? 1 : 0;
-    QCOMPARE(homes, 1);
+        stored << QStringLiteral("%1 #%2%3").arg(saved.name).arg(saved.id)
+                      .arg(saved.isHome ? QStringLiteral(" home") : QString());
+    }
+    QStringList shown;
+    for (int row = 0; row < places.count(); ++row)
+        shown << QStringLiteral("%1 #%2").arg(places.placeAt(row).name).arg(places.placeAt(row).id);
+    QVERIFY2(homes == 1, qPrintable(QStringLiteral("stored: %1; shown: %2")
+                                        .arg(stored.join(QStringLiteral(", ")),
+                                             shown.join(QStringLiteral(", ")))));
 
     // The home marker is a toggle with one legal direction: tapping it on a
     // place that is already home is a no-op rather than an app with no home.
