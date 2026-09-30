@@ -96,7 +96,8 @@ public:
 
     // "3:00 p.m." / "15:00". The reference's spelling inside a sentence, as
     // distinct from the "3:00 PM" a label uses - detaildata.js used both, in the
-    // same two places, and the distinction survived the port.
+    // same two places, and the distinction survived the port. On the hour at
+    // midnight and noon a 12-hour clock says the word.
     [[nodiscard]] QString sentence(QTime time) const;
 
 Q_SIGNALS:

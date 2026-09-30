@@ -87,9 +87,16 @@ void TestTimeFormat::everySpellingFollowsTheFormat_data()
     QTest::newRow("24h midnight") << "24h" << QTime(0, 5)
         << "00:00" << "00:05" << "00:05" << "" << "00:05";
 
+    // On the hour, a sentence says the word: "12:00 a.m." is the one spelling
+    // of a time a reader has to stop and work out. A label keeps the digits.
+    QTest::newRow("12h midnight exactly") << "12h" << QTime(0, 0)
+        << "12 AM" << "12:00 AM" << "12:00" << "AM" << "midnight";
+    QTest::newRow("24h midnight exactly") << "24h" << QTime(0, 0)
+        << "00:00" << "00:00" << "00:00" << "" << "00:00";
+
     // Noon: hour 12, which is 12 PM. The other end of the same mistake.
     QTest::newRow("12h noon") << "12h" << QTime(12, 0)
-        << "12 PM" << "12:00 PM" << "12:00" << "PM" << "12:00 p.m.";
+        << "12 PM" << "12:00 PM" << "12:00" << "PM" << "noon";
     QTest::newRow("24h noon") << "24h" << QTime(12, 0)
         << "12:00" << "12:00" << "12:00" << "" << "12:00";
 

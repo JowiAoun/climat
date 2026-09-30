@@ -1337,6 +1337,14 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>midnight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>noon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>a.m.</source>
         <translation type="unfinished"></translation>
     </message>

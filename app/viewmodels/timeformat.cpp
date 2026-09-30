@@ -109,6 +109,15 @@ QString TimeFormat::sentence(QTime time) const
     if (twentyFourHour())
         return clockBare(time);
 
+    // The two times "a.m." and "p.m." get wrong: "12:00 a.m." is the one a
+    // reader has to stop and work out. A sentence says the word.
+    if (time.minute() == 0) {
+        if (time.hour() == 0)
+            return tr("midnight");
+        if (time.hour() == 12)
+            return tr("noon");
+    }
+
     return QStringLiteral("%1:%2 %3").arg(twelve(time))
                                      .arg(minutes(time))
                                      .arg(time.hour() < 12 ? tr("a.m.") : tr("p.m."));
