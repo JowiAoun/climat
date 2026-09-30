@@ -90,6 +90,27 @@ QVariantMap attributionMap(const Attribution &credit)
     };
 }
 
+// What a failed refresh says under the forecast. The error's own message is for
+// the log, which gets it word for word: "Connection refused (fallbacks also
+// failed - met-no: Network[met-no]: Connection refused)" is a report for a
+// developer, and the stamp line used to print exactly that.
+QString refreshProblem(const Error &error)
+{
+    switch (error.kind()) {
+    case ErrorKind::Network:
+    case ErrorKind::Timeout:
+        return AppEngine::tr("no connection to the weather service");
+    case ErrorKind::RateLimited:
+    case ErrorKind::ServerError:
+        return AppEngine::tr("the weather service is not answering");
+    case ErrorKind::UserAgentRejected:
+    case ErrorKind::ProviderDisabled:
+        return AppEngine::tr("the weather service refused the request");
+    default:
+        return AppEngine::tr("the forecast could not be read");
+    }
+}
+
 } // namespace
 
 // ---- construction ----------------------------------------------------------------
@@ -515,8 +536,7 @@ void AppEngine::fetch(bool cachedOnly)
                     if (!cachedOnly) {
                         qWarning("climat: forecast failed: %s",
                                  qPrintable(result.error().toString()));
-                        m_problem = tr("Could not refresh: %1")
-                                        .arg(result.error().message());
+                        m_problem = tr("Could not refresh: %1").arg(refreshProblem(result.error()));
                         Q_EMIT forecastChanged();
                     }
                     return;

@@ -87,6 +87,22 @@
 <context>
     <name>AppEngine</name>
     <message>
+        <source>no connection to the weather service</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>the weather service is not answering</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>the weather service refused the request</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>the forecast could not be read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>No town or city within range of where you are.</source>
         <translation type="unfinished"></translation>
     </message>
