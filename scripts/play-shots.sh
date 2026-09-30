@@ -54,10 +54,14 @@ printf '[time]\nformat=12h\n' > "$XDG_CONFIG_HOME/Climat/climat.ini"
 # Name, then the app's arguments. The order is the order Play shows them, so
 # the first one is the one most people see: the Today tab, dark, with a
 # warning on it - Toronto's fixture carries one.
+#
+# The calendar is scrolled. The fixture is recorded on the 31st, so from the
+# top the frame is four weeks of empty cells, and the forecast is below them
+# in the next month.
 shots=(
   "01-today|--tab today"
   "02-hourly|--tab hourly"
-  "03-monthly|--tab monthly"
+  "03-monthly|--tab monthly --scroll 480"
   "04-me|--tab me"
   "05-today-light|--tab today --scheme light"
   "06-hourly-light|--tab hourly --scheme light"
