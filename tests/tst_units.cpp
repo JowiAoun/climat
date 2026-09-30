@@ -31,8 +31,8 @@
 // tests/CMakeLists.txt cannot express - so this is registered by hand there.
 #include "settings.h"
 #include "units.h"
+#include "support/settingssandbox.h"
 
-#include <QStandardPaths>
 #include <QtTest>
 
 class TestUnits : public QObject
@@ -51,7 +51,7 @@ private Q_SLOTS:
 void TestUnits::initTestCase()
 {
     // Before anything constructs a Settings, which Units does on first use.
-    QStandardPaths::setTestModeEnabled(true);
+    SettingsSandbox::install();
 }
 
 void TestUnits::init()

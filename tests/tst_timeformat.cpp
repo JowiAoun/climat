@@ -27,8 +27,8 @@
 // tests/CMakeLists.txt cannot express - so this is registered by hand there.
 #include "settings.h"
 #include "timeformat.h"
+#include "support/settingssandbox.h"
 
-#include <QStandardPaths>
 #include <QtTest>
 
 class TestTimeFormat : public QObject
@@ -52,7 +52,7 @@ void TestTimeFormat::initTestCase()
     // Without this the test writes to the developer's own preferences - and
     // worse, reads them: a developer who had set 24-hour would see this suite
     // pass for the wrong reason.
-    QStandardPaths::setTestModeEnabled(true);
+    SettingsSandbox::install();
 }
 
 // Every test starts from the shipped default rather than from whatever the one

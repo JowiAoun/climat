@@ -39,11 +39,11 @@
 #include "forecastdata.h"
 
 #include "libclimat/providers/fixture/fixtureprovider.h"
+#include "support/settingssandbox.h"
 
 #include <QDate>
 #include <QSet>
 #include <QSignalSpy>
-#include <QStandardPaths>
 #include <QStringList>
 #include <QTest>
 #include <QTime>
@@ -169,7 +169,7 @@ void TestForecastData::initTestCase()
 {
     // ForecastData reaches Units, which is a QSettings away from the
     // developer's own preferences. Same guard tst_conditionsdata sets.
-    QStandardPaths::setTestModeEnabled(true);
+    SettingsSandbox::install();
 
     m_fixture = fixtures::load(QStringLiteral("toronto"));
     QVERIFY(m_fixture.isValid());

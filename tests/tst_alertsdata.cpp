@@ -49,9 +49,9 @@
 #include "app/settings.h"
 #include "app/viewmodels/alertsdata.h"
 #include "libclimat/core/clock.h"
+#include "support/settingssandbox.h"
 
 #include <QSignalSpy>
-#include <QStandardPaths>
 #include <QScopeGuard>
 #include <QtTest>
 
@@ -203,7 +203,7 @@ void TestAlertsData::initTestCase()
     // Before anything constructs a QSettings. Settings is a singleton too and
     // AlertsData writes acknowledgements through it; without this the suite
     // would edit the developer's own configuration file.
-    QStandardPaths::setTestModeEnabled(true);
+    SettingsSandbox::install();
 
     m_alerts = AlertsData::instance();
     m_alerts->setClock(&m_clock);

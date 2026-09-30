@@ -40,6 +40,7 @@
 
 #include "app/settings.h"
 #include "app/settingskeys.h"
+#include "support/settingssandbox.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -140,10 +141,9 @@ private Q_SLOTS:
 
 void TestSettings::initTestCase()
 {
-    // Before any QSettings is constructed. Both lines are what main() does, in
-    // the order main() does them.
-    QStandardPaths::setTestModeEnabled(true);
-    QSettings::setDefaultFormat(QSettings::IniFormat);
+    // Before any QSettings is constructed. The INI format is what main() sets;
+    // the path is this file's own, on every platform.
+    SettingsSandbox::install();
 }
 
 void TestSettings::init()

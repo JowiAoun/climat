@@ -57,11 +57,11 @@
 #include "libclimat/domain/hourconvention.h"
 #include "libclimat/domain/weathercode.h"
 #include "libclimat/providers/fixture/fixtureprovider.h"
+#include "support/settingssandbox.h"
 
 #include <QRegularExpression>
 #include <QScopeGuard>
 #include <QSet>
-#include <QStandardPaths>
 #include <QStringList>
 #include <QTest>
 
@@ -128,7 +128,7 @@ void TestConditionsData::initTestCase()
     // Before anything constructs a Settings, which Units does on first use and
     // ConditionsData's constructor triggers. Without this the test writes to
     // the developer's real preferences directory.
-    QStandardPaths::setTestModeEnabled(true);
+    SettingsSandbox::install();
 }
 
 // Berlin, because it is the fixture with pollen in it: outside the CAMS

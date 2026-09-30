@@ -35,6 +35,7 @@ add_library(climat_testsupport STATIC
     support/httpstub.cpp
     support/networkguard.h
     support/networkguard.cpp
+    support/settingssandbox.h
 )
 
 target_include_directories(climat_testsupport PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
