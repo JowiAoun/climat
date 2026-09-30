@@ -13,14 +13,17 @@
 // this test writes into a config directory of its own, because the whole
 // point of the text output is that it follows them.
 
+#include <QCoreApplication>
 #include <QDateTime>
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QProcess>
 #include <QProcessEnvironment>
+#include <QSettings>
 #include <QTemporaryDir>
 #include <QtTest>
 
@@ -59,7 +62,13 @@ private Q_SLOTS:
 private:
     Outcome run(const QStringList &arguments, const QByteArray &ini = {});
 
+    // Whether the file climat-cli reads is inside m_config. Not on Windows,
+    // where it is under %APPDATA% and no environment variable moves it; a case
+    // that writes preferences skips there rather than overwrite the real ones.
+    bool preferencesAreOurOwn() const;
+
     QTemporaryDir m_config;
+    QString       m_preferences;
 };
 
 void TestCli::initTestCase()
@@ -67,21 +76,38 @@ void TestCli::initTestCase()
     QVERIFY2(QFile::exists(QStringLiteral(CLIMAT_CLI_BINARY)),
              "climat-cli was not built at " CLIMAT_CLI_BINARY);
     QVERIFY(m_config.isValid());
+
+    // Where climat-cli will look, asked of QSettings rather than spelled out,
+    // because the answer depends on the platform: macOS names the directory
+    // after the organisation's domain and Linux after its name. So this
+    // process takes the identity cli/main.cpp sets and the XDG_CONFIG_HOME
+    // run() hands the CLI, and reads the path back. Before any other QSettings
+    // exists, since Qt reads the variable once.
+    QCoreApplication::setOrganizationName(QStringLiteral("Climat"));
+    QCoreApplication::setOrganizationDomain(QStringLiteral("github.io"));
+    QCoreApplication::setApplicationName(QStringLiteral("climat"));
+    qputenv("XDG_CONFIG_HOME", QFile::encodeName(m_config.path()));
+    QSettings::setDefaultFormat(QSettings::IniFormat);
+    m_preferences = QSettings().fileName();
+}
+
+bool TestCli::preferencesAreOurOwn() const
+{
+    return m_preferences.startsWith(m_config.path() + QLatin1Char('/'));
 }
 
 Outcome TestCli::run(const QStringList &arguments, const QByteArray &ini)
 {
-    // The INI where QSettings will look for it under XDG_CONFIG_HOME: the
-    // organisation's directory, the application's file. Written fresh - or
-    // removed - for every run so that a case cannot inherit another's.
-    const QString directory = m_config.path() + QStringLiteral("/Climat");
-    const QString file      = directory + QStringLiteral("/climat.ini");
-    QDir().mkpath(directory);
-    QFile::remove(file);
-    if (!ini.isEmpty()) {
-        QFile out(file);
-        if (out.open(QIODevice::WriteOnly))
-            out.write(ini);
+    // Written fresh, or removed, for every run so that a case cannot inherit
+    // another's. Only when the file is ours: on Windows it is the real one.
+    if (preferencesAreOurOwn()) {
+        QDir().mkpath(QFileInfo(m_preferences).absolutePath());
+        QFile::remove(m_preferences);
+        if (!ini.isEmpty()) {
+            QFile out(m_preferences);
+            if (out.open(QIODevice::WriteOnly))
+                out.write(ini);
+        }
     }
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
@@ -102,6 +128,11 @@ Outcome TestCli::run(const QStringList &arguments, const QByteArray &ini)
     outcome.exitCode = process.exitCode();
     outcome.stdOut   = process.readAllStandardOutput();
     outcome.stdErr   = process.readAllStandardError();
+
+    // Windows ends a line of text output with CRLF. The lines are the
+    // interface and their ending is the platform's, so the cases read LF.
+    outcome.stdOut.replace("\r\n", "\n");
+    outcome.stdErr.replace("\r\n", "\n");
     return outcome;
 }
 
@@ -202,6 +233,9 @@ void TestCli::placesListsTheFixturePlace()
 
 void TestCli::theReadersUnitsAreHonouredInTextAndNotInJson()
 {
+    if (!preferencesAreOurOwn())
+        QSKIP("climat-cli reads %APPDATA% here, and this case would overwrite the real file");
+
     const QByteArray fahrenheit = QByteArrayLiteral("[units]\ntemperature=fahrenheit\nwind=mph\n");
 
     const Outcome text = run({ QStringLiteral("--fixture"), QStringLiteral("toronto"), QStringLiteral("now") },
@@ -223,6 +257,9 @@ void TestCli::theReadersUnitsAreHonouredInTextAndNotInJson()
 
 void TestCli::theOverrideBeatsThePreference()
 {
+    if (!preferencesAreOurOwn())
+        QSKIP("climat-cli reads %APPDATA% here, and this case would overwrite the real file");
+
     const Outcome metric = run({ QStringLiteral("--fixture"), QStringLiteral("toronto"),
                                  QStringLiteral("now"), QStringLiteral("--units"),
                                  QStringLiteral("metric") },
