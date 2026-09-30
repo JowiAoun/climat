@@ -299,10 +299,14 @@ TestCase {
         var qt = findRow(group, "Built with Qt")
         verify(licence !== null && qt !== null, "no licence rows")
 
+        // Measured once the rows are laid out. A Column places its children on
+        // the next polish, and read before it the group was 48 px short on CI.
+        waitForPolish(host)
+        var folded = group.height
+
         // The LGPL first, from the lower row. The GPL unfolded pushes that row
         // thousands of pixels down, off this window, where a click lands on
         // nothing.
-        var folded = group.height
         mouseClick(qt, 40, qt.height / 2)
         compare(group.reading, "lgpl")
         tryVerify(function() { return group.height > folded + 300 }, 1000,
