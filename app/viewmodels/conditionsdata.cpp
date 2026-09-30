@@ -138,6 +138,14 @@ QString readingOf(const Reading &canonical, Units::Quantity quantity)
     return Units::instance()->format(quantity, *canonical);
 }
 
+// The same reading without its unit, for a layout that sets the unit apart.
+QString figureOf(const Reading &canonical, Units::Quantity quantity)
+{
+    if (!canonical.has_value())
+        return QStringLiteral("\u2014");
+    return QString::number(roundedDisplay(canonical, quantity));
+}
+
 QVariantMap activity(const QString &name, const QString &status, const QString &tone)
 {
     return QVariantMap{ { QStringLiteral("name"), name },
@@ -292,8 +300,9 @@ QVariantMap neutralWind()
     return QVariantMap{
         { QStringLiteral("speed"), 0 },
         { QStringLiteral("reading"), QString() },
-        { QStringLiteral("gustReading"), QString() },
         { QStringLiteral("gust"), 0 },
+        { QStringLiteral("speedFigure"), QString() },
+        { QStringLiteral("gustFigure"), QString() },
         { QStringLiteral("unit"), QString() },
         { QStringLiteral("scaleMax"), 0 },
         { QStringLiteral("directionDeg"), -1 },
@@ -899,8 +908,12 @@ void ConditionsData::buildWind()
     m_wind = QVariantMap{
         { QStringLiteral("speed"), roundedDisplay(now.windSpeed, Units::Quantity::Wind) },
         { QStringLiteral("reading"), readingOf(now.windSpeed, Units::Quantity::Wind) },
-        { QStringLiteral("gustReading"), readingOf(now.windGust, Units::Quantity::Wind) },
         { QStringLiteral("gust"), roundedDisplay(now.windGust, Units::Quantity::Wind) },
+        // The card's two figures, which sit beside the unit rather than carry
+        // it. `speed` and `gust` above are numbers for the rose, where a missing
+        // reading has to be something; here it is a dash, not a calm "0".
+        { QStringLiteral("speedFigure"), figureOf(now.windSpeed, Units::Quantity::Wind) },
+        { QStringLiteral("gustFigure"), figureOf(now.windGust, Units::Quantity::Wind) },
         { QStringLiteral("unit"), units->bareSymbol(Units::Quantity::Wind) },
         // Beaufort 5 - a fresh breeze, when loose paper starts blowing about.
         // detaildata.js's ceiling, converted rather than re-chosen because it is

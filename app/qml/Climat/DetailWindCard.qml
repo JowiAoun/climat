@@ -320,7 +320,7 @@ DetailCard {
                 spacing: 7
 
                 Text {
-                    text: root.d.speed
+                    text: root.d.speedFigure
                     color: Theme.ink.primary
                     font.pixelSize: Theme.type.readingPair
                     font.bold: true
@@ -346,7 +346,7 @@ DetailCard {
                 spacing: 7
 
                 Text {
-                    text: root.d.gustReading
+                    text: root.d.gustFigure
                     color: Theme.ink.primary
                     font.pixelSize: Theme.type.readingPair
                     font.bold: true
