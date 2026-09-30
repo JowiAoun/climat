@@ -74,12 +74,18 @@ function field(count) {
         // stops the field reading as a regular dot screen: an even spread of
         // alpha gives 120 stars of roughly one weight, and a night sky is a
         // few bright ones over a haze of almost-nothing.
+        //
+        // The field is the haze. The bright few are the beacons and the
+        // constellations' own stars, so a field star stops at 0.55 alpha and
+        // 1.45 px. It went to 0.90 and 2 px, as bright as those, and the
+        // content scrolls over a sky that does not move: sooner or later one
+        // lands between two words and reads as a full stop.
         var bright = h3 * h3 * h3;
         out.push({
             x: h1,
             y: h2,
-            r: 0.55 + bright * 1.5,
-            a: 0.18 + bright * 0.72
+            r: 0.55 + bright * 0.9,
+            a: 0.18 + bright * 0.37
         });
     }
     return out;

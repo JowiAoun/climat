@@ -487,8 +487,13 @@ var precip = {
 // `dusk` is the palette this prototype has always had. The desktop page is dusk
 // permanently, so nothing about it changes; the phone is the screen that follows
 // the clock.
+//
+// `stars` scales the whole star layer. Night was 1.00, which put the Plough's
+// lines through the temperature at full strength and the brightest field stars
+// on the text around it. 0.60 keeps night the starriest phase and loses to the
+// text, which is the sky's one job.
 var sky = {
-    night: { stops: ["#0c1738", "#141f4a", "#1a2350", "#131a3e", "#0a0f2c"], stars: 1.00 },
+    night: { stops: ["#0c1738", "#141f4a", "#1a2350", "#131a3e", "#0a0f2c"], stars: 0.60 },
     dawn:  { stops: ["#132352", "#33386e", "#5a4470", "#3a3560", "#1b1f45"], stars: 0.45 },
     day:   { stops: ["#1d3d80", "#2a4f96", "#31568f", "#2a4070", "#1c2c50"], stars: 0.00 },
     dusk:  { stops: ["#203580", "#443e73", "#443a66", "#27284f", "#171e44"], stars: 0.50 }
