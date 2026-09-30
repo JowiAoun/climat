@@ -1189,7 +1189,7 @@ void ConditionsData::buildSunMoon()
         { QStringLiteral("riseSuffix"), suffix(day.sunrise) },
         { QStringLiteral("setLabel"), hhmm(day.sunset) },
         { QStringLiteral("setSuffix"), suffix(day.sunset) },
-        { QStringLiteral("dayLength"), tr("%1 hrs %2 mins").arg(dayHours).arg(dayMins) },
+        { QStringLiteral("dayLength"), tr("%1 h %2 min").arg(dayHours).arg(dayMins) },
         { QStringLiteral("trend"), QStringLiteral("none") },
         { QStringLiteral("status"), (nowMin >= riseMin && nowMin < setMin) ? tr("Daylight")
                                                                           : tr("Night") },
@@ -1220,7 +1220,7 @@ void ConditionsData::buildSunMoon()
         { QStringLiteral("setLabel"), hhmm(day.moonset) },
         { QStringLiteral("setSuffix"), suffix(day.moonset) },
         { QStringLiteral("upLength"),
-          tr("%1 hrs %2 mins").arg(upMinutes / 60).arg(upMinutes % 60) },
+          tr("%1 h %2 min").arg(upMinutes / 60).arg(upMinutes % 60) },
         { QStringLiteral("phase"), ForecastData::moonPhaseLabel(moonPhaseName(day.moonPhase)) },
         { QStringLiteral("illumination"), lit.value_or(0.0) },
         // Which limb is lit. The illuminated fraction cannot say: a waxing and

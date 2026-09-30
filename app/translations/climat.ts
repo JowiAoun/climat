@@ -310,7 +310,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 hrs %2 mins</source>
+        <source>%1 h %2 min</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
