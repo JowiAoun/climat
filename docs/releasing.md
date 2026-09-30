@@ -8,9 +8,9 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 How a version of Climat gets from `main` to a download. Most of it is automatic;
 the parts that are not are the parts that should not be.
 
-## Two settings this depends on, outside the repository
+## Settings this depends on, outside the repository
 
-Both are one click and neither is in a file, so both are recorded here.
+None of them is in a file, so they are recorded here.
 
 **Actions must be allowed to open pull requests.** Settings, Actions, General,
 Workflow permissions, "Allow GitHub Actions to create and approve pull
@@ -26,6 +26,14 @@ written offer for Qt's source, the Debian copyright file. They all say the same
 thing, and a release checks that they say what the repository is actually
 called. `scripts/check-urls.sh` is that check, the `preflight` job runs it with
 `--strict`, and a release stops rather than publishing a store page that 404s.
+The repository was renamed to match on 2026-09-30.
+
+**Pages must deploy from Actions, and from a tag.** Settings, Pages, Source:
+"GitHub Actions". That makes the `github-pages` environment, which lets only
+`main` deploy. The release runs on a `v*.*.*` tag, so the environment also has
+a deployment rule for that pattern (Settings, Environments, `github-pages`).
+Without it the store screenshots job is refused and the four URLs the
+AppStream component declares stay 404. Both set on 2026-09-30.
 
 ## The short version
 
@@ -183,8 +191,8 @@ release `0.1.0`, and `bootstrap-sha` starts its changelog at 2026-09-19, when
 the pipeline first worked. Without it the changelog would be every commit since
 the prototype. Both settings only apply while no release exists.
 
-The AppStream note for `0.1.0` is already written. Before merging the first
-release PR, set its `date` to the day you merge.
+The AppStream note for `0.1.0` is already written and dated 2026-09-30. If the
+first release PR is merged on another day, change the `date` to match.
 
 ## When Flathub happens
 

@@ -168,7 +168,7 @@
     release nobody wrote a note for.
   -->
   <releases>
-    <release version="0.1.0" date="2026-08-05" type="development">
+    <release version="0.1.0" date="2026-09-30" type="development">
       <description>
         <p>First development release.</p>
         <ul>
@@ -176,6 +176,8 @@
           <li>Severe weather warnings for Canada and the United States</li>
           <li>Dark and light themes that follow the desktop</li>
           <li>Phone, tablet and desktop layouts</li>
+          <li>Units and a 12 or 24-hour clock chosen per measurement</li>
+          <li>Desktop widgets, and climat-cli for a terminal or a status bar</li>
         </ul>
       </description>
     </release>
