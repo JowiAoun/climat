@@ -4,6 +4,7 @@
 #include "devtools/screenshotcontroller.h"
 
 #include <QCoreApplication>
+#include <QImage>
 #include <QPauseAnimation>
 #include <QQuickItem>
 #include <QQuickItemGrabResult>
@@ -40,6 +41,29 @@ constexpr int poke = 500;
 constexpr int film = 900;
 
 } // namespace when
+
+// PNG stores colour with alpha kept apart, and a grab arrives premultiplied, so
+// something has to divide by alpha before the file is written. Left to QImage,
+// that runs on a SIMD path built on an approximate reciprocal, and AMD and Intel
+// approximate it differently. The desktop tiles are the one translucent capture,
+// and CI drew them a level apart on 510 pixels depending on which runner it got.
+// qUnpremultiply() is integer arithmetic and gives the same answer on any CPU.
+// An opaque pixel comes through untouched, so every other image is unchanged.
+QImage straightAlpha(const QImage &grabbed)
+{
+    if (!grabbed.hasAlphaChannel())
+        return grabbed;
+
+    QImage image = grabbed.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+    if (!image.reinterpretAsFormat(QImage::Format_ARGB32))
+        return grabbed;
+    for (int y = 0; y < image.height(); ++y) {
+        auto *line = reinterpret_cast<QRgb *>(image.scanLine(y));
+        for (int x = 0; x < image.width(); ++x)
+            line[x] = qUnpremultiply(line[x]);
+    }
+    return image;
+}
 
 } // namespace
 
@@ -168,7 +192,7 @@ void ScreenshotController::grabTo(const QString &file, bool quitWhenSaved)
     // value or the render thread finishes into a deleted object.
     connect(result.data(), &QQuickItemGrabResult::ready, this,
             [this, result, file, quitWhenSaved] {
-                if (!result->saveToFile(file))
+                if (!straightAlpha(result->image()).save(file))
                     qWarning("grab: could not write %s", qPrintable(file));
                 else if (quitWhenSaved)
                     qInfo("grab: wrote %s", qPrintable(file));
