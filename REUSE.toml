@@ -469,3 +469,16 @@ path = ["app/translations/*.ts"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Jowi Aoun"
 SPDX-License-Identifier = "GPL-3.0-or-later"
+
+# The changelog, which release-please writes and rewrites in its release pull
+# request, the same reason the catalogue above is annotated rather than given
+# a header. The prose is generated from commit subjects in this repository, so it
+# takes the documentation licence.
+#
+# Named although the file does not exist until the first release PR merges.
+# Without this that merge turns `reuse lint`, and so CI on main, red.
+[[annotations]]
+path = ["CHANGELOG.md"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Jowi Aoun"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
