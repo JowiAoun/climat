@@ -6,6 +6,8 @@
 #include <QMutexLocker>
 #include <QtGlobal>
 
+#include <cstdio>
+
 namespace {
 
 // File-static rather than members, because a Qt message handler is a plain
@@ -14,6 +16,9 @@ namespace {
 QMutex      g_mutex;
 QStringList g_messages;
 QtMessageHandler g_previous = nullptr;
+
+// Set while a message is being handed down the chain. See handler().
+thread_local bool t_forwarding = false;
 
 // Every warning the QML engine raises arrives with a category. Filtering on it
 // rather than on the text keeps this from being a grep that goes stale: the
@@ -30,6 +35,18 @@ bool isInteresting(QtMsgType type)
 
 void handler(QtMsgType type, const QMessageLogContext &context, const QString &message)
 {
+    // The message came back around. When QTestLib stops logging it puts back
+    // the handler it replaced at the start, which is this one, and its own
+    // handler, still next in our chain, passes whatever it gets to that one.
+    // A warning printed after the last test then went back and forth between
+    // the two with no end: GCC turns both calls into jumps and the loop eats
+    // memory, and MSVC keeps them and runs out of stack. The Windows run
+    // crashed like that after every test had passed.
+    if (t_forwarding) {
+        std::fprintf(stderr, "%s\n", qPrintable(qFormatLogMessage(type, context, message)));
+        return;
+    }
+
     if (isInteresting(type)) {
         QMutexLocker locker(&g_mutex);
         const QString where = context.file != nullptr
@@ -40,8 +57,11 @@ void handler(QtMsgType type, const QMessageLogContext &context, const QString &m
 
     // Passed through, always. A test that swallowed the output would make a
     // failing run harder to read than a passing one, which is backwards.
-    if (g_previous != nullptr)
+    if (g_previous != nullptr) {
+        t_forwarding = true;
         g_previous(type, context, message);
+        t_forwarding = false;
+    }
 }
 
 } // namespace
