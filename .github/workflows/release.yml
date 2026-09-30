@@ -110,11 +110,15 @@ jobs:
         with:
           persist-credentials: false
 
+      # `file` is what CPack runs to find the binaries dpkg-shlibdeps reads the
+      # Depends field from. The container does not have it, and without it the
+      # package step fails after the whole build. scripts/deb.sh installs the
+      # same list.
       - name: Install the build dependencies
         run: |
           apt-get update
           DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
-            build-essential cmake ninja-build pkg-config \
+            build-essential cmake ninja-build pkg-config file \
             qt6-base-dev qt6-declarative-dev qt6-declarative-dev-tools \
             libqt6sql6-sqlite libgl1-mesa-dev
 
@@ -151,10 +155,12 @@ jobs:
         with:
           persist-credentials: false
 
+      # elfutils because flatpak-builder strips each module with the host's
+      # eu-strip, not the SDK's, and the runner image does not have it.
       - name: Install flatpak-builder
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y flatpak flatpak-builder
+          sudo apt-get install --no-install-recommends -y flatpak flatpak-builder elfutils
 
       # Reads the runtime version out of the manifest rather than repeating it
       # here, so this cannot install a runtime the manifest does not ask for.
@@ -231,6 +237,12 @@ jobs:
           cp packaging/QT-SOURCE-OFFER.txt AppDir/
           cp LICENSE COPYING.LESSER AppDir/
 
+      # The Qt plugin deploys every SQL driver it finds, and the app uses one.
+      # The others drag in the PostgreSQL and MySQL clients, and the Mimer one
+      # needs a library the runner does not have, which fails the whole step.
+      - name: Keep only the SQLite driver
+        run: find "$QT_ROOT_DIR/plugins/sqldrivers" -type f ! -name 'libqsqlite.so' -delete
+
       - name: Package
         env:
           QMAKE: ${{ env.QT_ROOT_DIR }}/bin/qmake6
@@ -293,7 +305,9 @@ jobs:
             -DCLIMAT_BUILD_GALLERY=OFF \
             -DCLIMAT_DEV_TOOLS=OFF
           cmake --build build
-          cmake --install build --prefix stage
+          # Absolute, and in Windows form: Qt's deploy step refuses a relative
+          # prefix when it writes qt.conf, and CMake cannot read /d/a/... paths.
+          cmake --install build --prefix "$(cygpath -m "$PWD")/stage"
 
       - name: Add the licence files a bundled Qt requires
         shell: bash
