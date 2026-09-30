@@ -160,6 +160,8 @@ MobilePage {
         content: SourcesList { }
     }
 
+    PrefAbout { width: root.spanWidth(1) }
+
     // What this run is doing, said outright. Under `--fixture` every time on
     // screen is a recorded afternoon's, and a reviewer holding a screenshot
     // deserves to be told that by the screenshot rather than by the command

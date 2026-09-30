@@ -161,6 +161,8 @@ Item {
                     }
                 }
 
+                PrefAbout { width: parent.width }
+
                 // Where the file is. The first question of every support
                 // conversation, and the answer is one a person can act on: open
                 // it, read line 4, delete it to start again.

@@ -167,6 +167,10 @@ class AppEngine : public QObject
     // About screen is built from the registry so it cannot go stale.
     Q_PROPERTY(QVariantList sources READ sources CONSTANT)
 
+    // The project's page, from CMakeLists.txt's HOMEPAGE_URL, so the About
+    // group's links are the same URL every other file carries.
+    Q_PROPERTY(QString homepage READ homepage CONSTANT)
+
     // ---- what may be drawn here --------------------------------------------
     //
     // Three-valued underneath (see iforecastprovider.h) and collapsed to two
@@ -226,6 +230,7 @@ public:
 
     [[nodiscard]] bool isFixtureMode() const { return m_fixture.isValid(); }
     [[nodiscard]] QString fixtureName() const { return m_fixture.name; }
+    [[nodiscard]] QString homepage() const;
 
     [[nodiscard]] QVariantList sources() const;
 

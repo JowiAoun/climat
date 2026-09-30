@@ -1118,6 +1118,45 @@
     </message>
 </context>
 <context>
+    <name>PrefAbout</name>
+    <message>
+        <source>About</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Licence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Free software under the GNU GPL, version 3 or later.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Built with Qt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Used under the GNU LGPL, version 3.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Source code</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Report a problem</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Opens the issue tracker in your browser.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PrefGeneral</name>
     <message>
         <source>General</source>

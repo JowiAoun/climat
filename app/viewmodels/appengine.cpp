@@ -3,6 +3,8 @@
 
 #include "appengine.h"
 
+#include "climatconfig.h"
+
 #include "alertsdata.h"
 #include "notifier.h"
 #include "conditionsdata.h"
@@ -877,6 +879,11 @@ bool AppEngine::isStale() const
     // freshness, and the two would disagree the day §4.5 is edited.
     const QDateTime expires = expiryFor(DataKind::Forecast, m_forecast.fetchedAt);
     return expires.isValid() && m_clock->now() > expires;
+}
+
+QString AppEngine::homepage() const
+{
+    return QStringLiteral(CLIMAT_HOMEPAGE);
 }
 
 QVariantList AppEngine::sources() const

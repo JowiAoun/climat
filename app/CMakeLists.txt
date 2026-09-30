@@ -83,6 +83,7 @@ set(climat_qml_files
     qml/Climat/PrecipBands.qml
     qml/Climat/PrecipField.qml
     qml/Climat/PrecipitationStrip.qml
+    qml/Climat/PrefAbout.qml
     qml/Climat/PrefGeneral.qml
     qml/Climat/PrefGroup.qml
     qml/Climat/PrefRow.qml
