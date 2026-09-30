@@ -25,17 +25,16 @@
   ==== building it ===========================================================
 
   Not by CPack. CPack's WIX generator targets WiX v3, which is end of life.
-  The release workflow does:
+  The windows job in .github/workflows/release.yml installs WiX 5 as a dotnet
+  tool and runs `wix build` on this file, with the version passed in as the
+  variable Version and two bind paths: `stage`, the staged install, and
+  `icons`, packaging/icons. The exact lines are there and not here, because an
+  XML comment cannot hold the double hyphen every one of those flags starts
+  with.
 
-      dotnet tool install --global wix
-      wix build packaging/windows/climat.wxs
-          -d Version=0.1.0
-          -bindpath stage=<staged install>
-          -bindpath icons=packaging/icons
-          -o climat-0.1.0-windows-x64.msi
-
-  The staged tree is `cmake --install` output with windeployqt already run into
-  it, plus the two licence files the LGPL requires beside a bundled Qt.
+  The staged tree is the output of CMake's install step with windeployqt
+  already run into it, plus the two licence files the LGPL requires beside a
+  bundled Qt.
 
   NOT VERIFIED. There is no MSVC and no Windows in the development environment
   this was written in, so this file has never been compiled by `wix build`.
