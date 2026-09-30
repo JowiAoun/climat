@@ -209,9 +209,14 @@ TestCase {
 
     // ---- keeping the selection on screen ----------------------------------
     //
-    // `Theme.stillness` is on for this file, so the scroll animation has a zero
-    // duration - but it is still an animation, and an animation lands on the
-    // next frame rather than on the next statement. Hence the wait.
+    // `Theme.stillness` is on for this file, so every animation has a zero
+    // duration and lands in the statement that starts it: a selection's widths
+    // and its scroll are already there on the next line. What is not is where
+    // the cards sit. The Row places them when it is next polished, so a card's
+    // x is its old one until then, and a test that measured it straight after
+    // a selection measured the layout before it. That is what failed on a
+    // macOS runner, where 50 ms was sometimes not a polish. Hence
+    // waitForPolish rather than a wait.
 
     function visibleExtent(index) {
         var flick = scrollerOf(ends)
@@ -224,12 +229,13 @@ TestCase {
         var flick = scrollerOf(ends)
         flick.contentX = 0
         ends.currentIndex = Data.todayIndex
+        waitForPolish(host)
 
         var last = cardsOf(ends).length - 1
         verify(visibleExtent(last).from > flick.width, "the last card was already in view")
 
         ends.currentIndex = last
-        wait(50)
+        waitForPolish(host)
 
         var seen = visibleExtent(last)
         verify(seen.from >= 0 && seen.to <= seen.width + 0.5,
@@ -256,11 +262,11 @@ TestCase {
         // grows - the strip absorbs the change and there is nothing to reveal.
         ends.currentIndex = cardsOf(ends).length - 1
         flick.contentX = 0
-        wait(50)
+        waitForPolish(host)
 
         var card = cardsOf(ends)[4]
         ends.width = card.x + card.width + 20
-        wait(50)
+        waitForPolish(host)
 
         var before = visibleExtent(4)
         verify(before.to <= before.width, "the card is not fully visible to begin with")
@@ -268,7 +274,7 @@ TestCase {
                "this card had room to widen anyway, so it proves nothing")
 
         ends.currentIndex = 4
-        wait(50)
+        waitForPolish(host)
 
         var after = visibleExtent(4)
         verify(after.to <= after.width + 0.5,
@@ -302,7 +308,7 @@ TestCase {
         verify(!late.placed, "the strip called itself placed with no geometry")
 
         late.width = 950
-        wait(50)
+        waitForPolish(host)
 
         var flick = scrollerOf(late)
         var card = cardsOf(late)[last]
