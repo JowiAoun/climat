@@ -21,6 +21,13 @@ Item {
         (width + Theme.metric.detailGap)
         / (Theme.metric.detailCardWidth + Theme.metric.detailGap)))
 
+    // The cards share the row. At their bare 300 px, whatever the columns left
+    // over sat as a gap on the right: 48 px at 1340, so the grid stopped short of
+    // the hero and the chart above it. The card width stays the smallest a card
+    // is drawn at and decides how many fit.
+    readonly property int cellWidth: Math.max(Theme.metric.detailCardWidth, Math.floor(
+        (width - (columns - 1) * Theme.metric.detailGap) / columns))
+
     implicitHeight: grid.y + grid.height
     height: implicitHeight
 
@@ -55,6 +62,7 @@ Item {
                 required property string modelData
                 required property int index
                 source: "Detail" + modelData + "Card.qml"
+                width: root.cellWidth
 
                 // Stagger the reveal across the grid. Twelve cards at one
                 // stagger apart is a half-second wave that reads as a single
