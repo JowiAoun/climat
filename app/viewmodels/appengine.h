@@ -171,6 +171,11 @@ class AppEngine : public QObject
     // group's links are the same URL every other file carries.
     Q_PROPERTY(QString homepage READ homepage CONSTANT)
 
+    // The GPL this app is under and the LGPL Qt is under, from the copies built
+    // into it. The About group unfolds them in place.
+    Q_PROPERTY(QString licenceText READ licenceText CONSTANT)
+    Q_PROPERTY(QString qtLicenceText READ qtLicenceText CONSTANT)
+
     // ---- what may be drawn here --------------------------------------------
     //
     // Three-valued underneath (see iforecastprovider.h) and collapsed to two
@@ -231,6 +236,8 @@ public:
     [[nodiscard]] bool isFixtureMode() const { return m_fixture.isValid(); }
     [[nodiscard]] QString fixtureName() const { return m_fixture.name; }
     [[nodiscard]] QString homepage() const;
+    [[nodiscard]] QString licenceText() const;
+    [[nodiscard]] QString qtLicenceText() const;
 
     [[nodiscard]] QVariantList sources() const;
 

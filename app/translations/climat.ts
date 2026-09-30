@@ -1148,6 +1148,14 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Hide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Read</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Version</source>
         <translation type="unfinished"></translation>
     </message>

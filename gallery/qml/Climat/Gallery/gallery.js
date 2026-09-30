@@ -437,7 +437,11 @@ var groups = [
             { name: "Units", file: "PrefUnits.qml", stage: { w: 520, h: 0 },
               blurb: "Two presets over five per-quantity preferences. Change one row and both radios empty - that state is `custom`, and it is the model being honest." },
             { name: "About", file: "PrefAbout.qml", stage: { w: 520, h: 0 },
-              blurb: "Version, licence, source and issues. The licence row is also the notice Qt's LGPL asks for." },
+              blurb: "Version, licence, source and issues. The Qt row is also the notice Qt's LGPL asks for, and both licences unfold from the copies built into the app.",
+              variants: [
+                  { label: "folded",        props: {} },
+                  { label: "the LGPL open", props: { reading: "lgpl" } }
+              ] },
             { name: "Data sources", file: "SourcesList.qml", stage: { w: 488, h: 0 },
               blurb: "Every source in its licence's own words. The desktop sheet and the Me tab show this same list." },
             { name: "Preference row", file: "PrefRow.qml", stage: { w: 460, h: 0 },

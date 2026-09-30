@@ -278,6 +278,46 @@ TestCase {
                     "row \"" + rows[m].title + "\" at y=" + rows[m].y)
     }
 
+    // ---- the licences travel with the app -----------------------------------
+    //
+    // Qt's LGPL asks for its text to go with every copy, and a phone gets only
+    // what is inside the package. So the two rows unfold the copies built into
+    // the app: a tap has to show text, and it has to be the licence it names.
+    function test_theLicencesUnfoldFromTheCopiesBuiltIn() {
+        var group = build("PrefAbout", { width: 520 })
+
+        verify(Engine.licenceText.indexOf("GNU GENERAL PUBLIC LICENSE") === 0,
+               Engine.licenceText.slice(0, 80))
+        verify(Engine.qtLicenceText.indexOf("GNU LESSER GENERAL PUBLIC LICENSE") === 0,
+               Engine.qtLicenceText.slice(0, 80))
+
+        // One paragraph to a line. COPYING.LESSER is wrapped at 72 columns, and
+        // a line break left inside a paragraph is a break a phone draws twice.
+        verify(!/[^\n]\n[^\n]/.test(Engine.qtLicenceText), "a paragraph still has a line break in it")
+
+        var licence = findRow(group, "Licence")
+        var qt = findRow(group, "Built with Qt")
+        verify(licence !== null && qt !== null, "no licence rows")
+
+        // The LGPL first, from the lower row. The GPL unfolded pushes that row
+        // thousands of pixels down, off this window, where a click lands on
+        // nothing.
+        var folded = group.height
+        mouseClick(qt, 40, qt.height / 2)
+        compare(group.reading, "lgpl")
+        tryVerify(function() { return group.height > folded + 300 }, 1000,
+                  "the LGPL did not unfold under its row")
+
+        // One open at a time, and a second tap folds it away again.
+        mouseClick(licence, 40, licence.height / 2)
+        compare(group.reading, "gpl")
+        tryVerify(function() { return group.height > folded + 1000 }, 1000,
+                  "the GPL did not unfold under its row")
+        mouseClick(licence, 40, licence.height / 2)
+        compare(group.reading, "")
+        tryCompare(group, "height", folded)
+    }
+
     // ---- the sheet ----------------------------------------------------------
     //
     // Closed is not merely transparent: `enabled` has to go with it, or a sheet

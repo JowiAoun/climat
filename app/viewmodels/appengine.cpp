@@ -30,9 +30,11 @@
 
 #include <QCoreApplication>
 #include <QEventLoop>
+#include <QFile>
 #include <QFutureWatcher>
 #include <QLocale>
 #include <QProcessEnvironment>
+#include <QRegularExpression>
 #include <QTimeZone>
 #include <QTimer>
 #include <QUrl>
@@ -109,6 +111,24 @@ QString refreshProblem(const Error &error)
     default:
         return AppEngine::tr("the forecast could not be read");
     }
+}
+
+// A licence built into the app, as app/CMakeLists.txt puts it there. One
+// paragraph to a line: COPYING.LESSER is wrapped at 72 columns, and a phone
+// wraps each of those lines again at its own width, which reads as ragged. The
+// blank lines between paragraphs stay.
+QString builtInLicence(const QString &file)
+{
+    QFile in(QStringLiteral(":/licences/") + file);
+    if (!in.open(QIODevice::ReadOnly))
+        return {};
+
+    static const QRegularExpression blankLine(QStringLiteral("\\n\\s*\\n"));
+    static const QRegularExpression whitespace(QStringLiteral("\\s+"));
+    QStringList paragraphs;
+    for (QString paragraph : QString::fromUtf8(in.readAll()).split(blankLine, Qt::SkipEmptyParts))
+        paragraphs << paragraph.replace(whitespace, QStringLiteral(" ")).trimmed();
+    return paragraphs.join(QStringLiteral("\n\n"));
 }
 
 } // namespace
@@ -904,6 +924,16 @@ bool AppEngine::isStale() const
 QString AppEngine::homepage() const
 {
     return QStringLiteral(CLIMAT_HOMEPAGE);
+}
+
+QString AppEngine::licenceText() const
+{
+    return builtInLicence(QStringLiteral("LICENSE"));
+}
+
+QString AppEngine::qtLicenceText() const
+{
+    return builtInLicence(QStringLiteral("COPYING.LESSER"));
 }
 
 QVariantList AppEngine::sources() const

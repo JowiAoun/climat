@@ -293,6 +293,21 @@ qt_add_qml_module(climatqml
         ${climat_cpp_sources}
 )
 
+# ---- the two licences --------------------------------------------------------
+#
+# Compiled in, so the About group can show them and every package carries them.
+# The Android package has no other way to: the release puts LICENSE and
+# COPYING.LESSER beside a Windows build and an AppImage, and a phone gets only
+# what is inside the APK. Qt's LGPL asks for its text to go with every copy.
+# They land at `:/licences/LICENSE` and `:/licences/COPYING.LESSER`.
+qt_add_resources(climatqml "licences"
+    PREFIX "/licences"
+    BASE "${CMAKE_SOURCE_DIR}"
+    FILES
+        "${CMAKE_SOURCE_DIR}/LICENSE"
+        "${CMAKE_SOURCE_DIR}/COPYING.LESSER"
+)
+
 # PUBLIC, all three, and each for its own reason.
 #
 # The binary dir is where configure_file put climatconfig.h, and both executables
