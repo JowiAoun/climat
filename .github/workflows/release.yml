@@ -335,10 +335,20 @@ jobs:
           # its maintenance-fee EULA is accepted. 5 is what the .wxs was written
           # for and carries no such term.
           dotnet tool install --global wix --version 5.0.2
+
+          # Absolute bind paths. WiX resolves a relative one against the .wxs
+          # file's folder, and a stage it cannot find is only a warning: the
+          # first MSI built here harvested no files and the job passed. -wx
+          # makes that, and every other warning, fail the build.
+          #
+          # And the numbers only. A rehearsal's 0.1.0-dev is not an MSI
+          # version; the file name keeps the suffix.
+          $version = $env:CLIMAT_RELEASE_VERSION -replace '-.*$', ''
           wix build packaging\windows\climat.wxs `
-            -d Version=$env:CLIMAT_RELEASE_VERSION `
-            -bindpath "stage=stage" `
-            -bindpath "icons=packaging\icons" `
+            -wx `
+            -d Version=$version `
+            -bindpath "stage=$PWD\stage" `
+            -bindpath "icons=$PWD\packaging\icons" `
             -o "climat-$env:CLIMAT_RELEASE_VERSION-windows-x64.msi"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
