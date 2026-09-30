@@ -595,6 +595,7 @@ void AppEngine::fetch(bool cachedOnly)
                 }
 
                 m_alerts->setRefreshFailed(false);
+                m_alerts->setTimeZone(QTimeZone(place().timezone.toUtf8()));
                 m_alerts->apply(result.value().value);
             });
     const QFuture<Result<AlertAnswer>> alertFuture = m_registry->fetchAlerts(alerts);

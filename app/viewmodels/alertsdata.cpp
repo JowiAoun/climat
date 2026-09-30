@@ -65,12 +65,21 @@ const QChar kFieldSeparator = QChar(0x1f);
 // "23:00", in the same window, in the same second. Neither was a decision.
 //
 // TimeFormat is now the one answer, and the same one the hour labels use.
-QString stamp(const QDateTime &instant, const QDateTime &now, const QLocale &locale)
+//
+// ---- and the zone is the place's, not the machine's --------------------------
+//
+// It read both instants with toLocalTime(). Every other time in the app is the
+// place's, so a reader in Toronto looking at Seattle saw the clock in Seattle
+// time and the banner under it in Toronto time. A capture, which runs in UTC,
+// put "Until Fri 5:00 AM" on an advisory its issuer wrote as "Until 10 PM PDT
+// Thursday".
+QString stamp(const QDateTime &instant, const QDateTime &now, const QLocale &locale,
+              const QTimeZone &zone)
 {
-    const QDateTime local = instant.toLocalTime();
+    const QDateTime local = instant.toTimeZone(zone);
     const QString   time  = TimeFormat::instance()->clock(local.time());
 
-    if (local.date() == now.toLocalTime().date())
+    if (local.date() == now.toTimeZone(zone).date())
         return time;
 
     return locale.dayName(local.date().dayOfWeek(), QLocale::ShortFormat)
@@ -214,6 +223,14 @@ void AlertsData::clear(bool available)
     m_tick.stop();
     rebuild();
     reschedule();
+}
+
+void AlertsData::setTimeZone(const QTimeZone &zone)
+{
+    if (!zone.isValid() || zone == m_zone)
+        return;
+    m_zone = zone;
+    rebuild();
 }
 
 void AlertsData::rebuild()
@@ -430,9 +447,9 @@ QVariantMap AlertsData::toVariant(const Alert &alert) const
     QString when;
     if (phase == AlertPhase::Pending && alert.onset.isValid()) {
         //: %1 is a time, e.g. "12:00 PM" or "Thu 11:00 PM"
-        when = tr("Begins %1").arg(stamp(alert.onset, instant, locale));
+        when = tr("Begins %1").arg(stamp(alert.onset, instant, locale, m_zone));
     } else if (alert.hazardEnd().isValid()) {
-        when = tr("Until %1").arg(stamp(alert.hazardEnd(), instant, locale));
+        when = tr("Until %1").arg(stamp(alert.hazardEnd(), instant, locale, m_zone));
     }
     map[QStringLiteral("when")] = when;
 
@@ -485,7 +502,7 @@ QString AlertsData::confirmedLabel() const
     if (!m_set.confirmedAt.isValid())
         return {};
     //: %1 is a time of day. Shown when an alert could not be re-checked.
-    return tr("Last confirmed %1").arg(stamp(m_set.confirmedAt, now(), QLocale()));
+    return tr("Last confirmed %1").arg(stamp(m_set.confirmedAt, now(), QLocale(), m_zone));
 }
 
 // ---- acknowledgement ----------------------------------------------------------------

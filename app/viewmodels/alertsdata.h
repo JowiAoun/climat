@@ -174,6 +174,11 @@ public:
     void setClock(climat::Clock *clock);
     void setSettings(Settings *settings);
 
+    // The zone of the place the alerts are for. Every "Until 11:00 PM" is read
+    // in it, as every other time in the app is. The machine's own zone until
+    // AppEngine says otherwise.
+    void setTimeZone(const QTimeZone &zone);
+
     // A new set from the engine. `complete` and `confirmedAt` travel inside it.
     void apply(const climat::AlertSet &set);
 
@@ -283,6 +288,7 @@ private:
 
     climat::Clock *m_clock    = nullptr;
     Settings     *m_settings = nullptr;
+    QTimeZone     m_zone     = QTimeZone::systemTimeZone();
 
     climat::AlertSet m_set;
     QVariantList    m_list;

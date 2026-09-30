@@ -52,6 +52,7 @@
 
 #include <QSignalSpy>
 #include <QStandardPaths>
+#include <QScopeGuard>
 #include <QtTest>
 
 using namespace climat;
@@ -143,6 +144,7 @@ private Q_SLOTS:
     void anEndedHazardLeavesTheScreenWithoutANewPayload();
     void aPendingHazardIsShownWithTheTimeItBegins();
     void anActiveHazardIsShownWithTheTimeItEnds();
+    void theEndIsReadInThePlacesOwnZone();
     void aModelWithNoClockShowsNothingRatherThanGuessing();
 
     // ---- confidence ---------------------------------------------------------
@@ -378,6 +380,24 @@ void TestAlertsData::anActiveHazardIsShownWithTheTimeItEnds()
     // weekday. A bare "11:00 PM" for something ending tomorrow night is the
     // half of this string that actually misleads.
     QVERIFY2(when.contains(QStringLiteral("Fri")), qPrintable(when));
+}
+
+// The same advisory, read where it was issued. Its own text says "Until 11 PM
+// PDT Thursday", and a banner that followed the machine's zone said Friday
+// morning to anyone east of the Atlantic, and to every capture, which runs in
+// UTC. AppEngine hands the model the place's zone; this is that hand-off.
+void TestAlertsData::theEndIsReadInThePlacesOwnZone()
+{
+    const auto restore = qScopeGuard([this] {
+        m_alerts->setTimeZone(QTimeZone::systemTimeZone());
+    });
+    m_alerts->setTimeZone(QTimeZone("America/Los_Angeles"));
+    m_alerts->apply(setOf({ heatAdvisory() }, at(6, 0)));
+
+    const QString when = m_alerts->top().value(QStringLiteral("when")).toString();
+    QVERIFY2(when.startsWith(QStringLiteral("Until Thu ")), qPrintable(when));
+    QVERIFY2(when.endsWith(QStringLiteral("11:00 PM")) || when.endsWith(QStringLiteral("23:00")),
+             qPrintable(when));
 }
 
 void TestAlertsData::aModelWithNoClockShowsNothingRatherThanGuessing()
