@@ -237,11 +237,17 @@ jobs:
           cp packaging/QT-SOURCE-OFFER.txt AppDir/
           cp LICENSE COPYING.LESSER AppDir/
 
-      # The Qt plugin deploys every SQL driver it finds, and the app uses one.
-      # The others drag in the PostgreSQL and MySQL clients, and the Mimer one
-      # needs a library the runner does not have, which fails the whole step.
-      - name: Keep only the SQLite driver
-        run: find "$QT_ROOT_DIR/plugins/sqldrivers" -type f ! -name 'libqsqlite.so' -delete
+      # The Qt plugin deploys every plugin it finds for a module the app links,
+      # and a plugin whose own dependency is missing fails the whole step. The
+      # app uses one SQL driver of seven: the rest drag in the PostgreSQL and
+      # MySQL clients, and the Mimer one needs a library the runner does not
+      # have. The NMEA position plugin needs Qt SerialPort, which is not
+      # installed, and reads a serial GPS the app never asks for; on Linux the
+      # default source is GeoClue2.
+      - name: Keep only the plugins the app loads
+        run: |
+          find "$QT_ROOT_DIR/plugins/sqldrivers" -type f ! -name 'libqsqlite.so' -delete
+          rm -f "$QT_ROOT_DIR/plugins/position/libqtposition_nmea.so"
 
       - name: Package
         env:
@@ -325,7 +331,10 @@ jobs:
       - name: MSI
         shell: pwsh
         run: |
-          dotnet tool install --global wix
+          # Pinned. Unpinned, this installed WiX 7, which refuses to run until
+          # its maintenance-fee EULA is accepted. 5 is what the .wxs was written
+          # for and carries no such term.
+          dotnet tool install --global wix --version 5.0.2
           wix build packaging\windows\climat.wxs `
             -d Version=$env:CLIMAT_RELEASE_VERSION `
             -bindpath "stage=stage" `
