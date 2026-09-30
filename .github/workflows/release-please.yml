@@ -23,6 +23,14 @@
 # GNOME Software and Discover showing the previous version's description, which
 # nobody notices until it is published. Reviewing the release PR means writing
 # the release note; the CMake error says so in as many words.
+#
+# ==== the first release ======================================================
+#
+# The manifest says 0.0.0 because nothing has been released. With no release to
+# bump from, `initial-version` makes the first one 0.1.0 (the version the tree
+# and the AppStream note already carry), and `bootstrap-sha` starts its
+# changelog at the commit that made the pipeline work, not at the prototype.
+# Both settings only apply while no release exists, so neither needs removing.
 name: release-please
 
 on:

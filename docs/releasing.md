@@ -173,6 +173,17 @@ nix develop --command actionlint
 without a tag. Note that the publish step still wants `$GITHUB_REF_NAME` to be
 a release name, so dispatch it from a tag ref if you want it to go all the way.
 
+## The first release
+
+Nothing has been released yet, so `.release-please-manifest.json` says `0.0.0`.
+`initial-version` in `.github/release-please-config.json` makes the first
+release `0.1.0`, and `bootstrap-sha` starts its changelog at 2026-09-19, when
+the pipeline first worked. Without it the changelog would be every commit since
+the prototype. Both settings only apply while no release exists.
+
+The AppStream note for `0.1.0` is already written. Before merging the first
+release PR, set its `date` to the day you merge.
+
 ## When Flathub happens
 
 The manifest in `packaging/flatpak/` builds a `dir` source - this working tree
