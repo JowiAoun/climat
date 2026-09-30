@@ -34,8 +34,9 @@ called. `scripts/check-urls.sh` is that check, the `preflight` job runs it with
    X.Y.Z**. It accumulates every commit since the last tag.
 3. **The release PR will be red.** Add the AppStream release note (below).
 4. Merge it. `release-please` tags `vX.Y.Z` and creates the GitHub Release.
-5. The tag triggers `release.yml`, which builds every artefact and attaches
-   them to that release.
+5. `release-please` then starts `release.yml` on that tag, which builds every
+   artefact and attaches them to the release. It has to start it by hand: a
+   tag made with the workflow's own token starts no workflow by itself.
 
 There is no manual `git tag`. If you find yourself typing one, something above
 has gone wrong and tagging by hand will hide it.
@@ -169,9 +170,9 @@ scripts/android.sh aab          # the bundle; unsigned unless the key variables 
 nix develop --command actionlint
 ```
 
-`release.yml` also accepts `workflow_dispatch`, which runs the whole thing
-without a tag. Note that the publish step still wants `$GITHUB_REF_NAME` to be
-a release name, so dispatch it from a tag ref if you want it to go all the way.
+`release.yml` also accepts `workflow_dispatch`. Run it on a branch and it builds
+and attests everything and publishes nothing. Run it on a tag and it is a
+release, which is how `release-please` starts it.
 
 ## The first release
 
