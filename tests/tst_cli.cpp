@@ -42,6 +42,7 @@ private Q_SLOTS:
     void initTestCase();
 
     void nowPrintsThePlaceAndAReading();
+    void aWarningNamesTheDayItEndsAndIsPrintedOnce();
     void nowAsJsonIsCanonicalAndShaped();
     void hourlyCountsHours();
     void dailyCountsDaysAndStartsToday();
@@ -114,6 +115,24 @@ void TestCli::nowPrintsThePlaceAndAReading()
     QVERIFY2(text.contains(QStringLiteral("°C")), qPrintable(text));
     QVERIFY2(text.contains(QStringLiteral("Updated")), qPrintable(text));
     QVERIFY2(text.contains(QStringLiteral("fixture")), qPrintable(text));
+}
+
+// Seattle's heat advisory ends at 10 PM on Thursday and the fixture is recorded
+// on Wednesday afternoon. "until 10:00 PM" read as tonight. Its three Air Quality
+// Alerts differ only in the counties they cover, which this output does not
+// print, so they were three identical lines.
+void TestCli::aWarningNamesTheDayItEndsAndIsPrintedOnce()
+{
+    const Outcome got = run({ QStringLiteral("--fixture"), QStringLiteral("seattle"), QStringLiteral("now") });
+    QCOMPARE(got.exitCode, 0);
+    const QString text = QString::fromUtf8(got.stdOut);
+
+    // Either clock: the day is the point, and this run has no preference file.
+    QVERIFY2(text.contains(QStringLiteral("! Heat Advisory (Moderate) · until Thu 10:00 PM\n"))
+                 || text.contains(QStringLiteral("! Heat Advisory (Moderate) · until Thu 22:00\n")),
+             qPrintable(text));
+    QCOMPARE(text.count(QStringLiteral("Air Quality Alert")), 1);
+    QVERIFY2(text.contains(QStringLiteral(" · 3 notices\n")), qPrintable(text));
 }
 
 void TestCli::nowAsJsonIsCanonicalAndShaped()

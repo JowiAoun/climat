@@ -218,6 +218,18 @@ QString clock(const Preferences &prefs, const QDateTime &instant, const QTimeZon
                                 : local.toString(QStringLiteral("h:mm AP"));
 }
 
+// "10:00 PM" today and "Thu 10:00 PM" any other day, as the app's banner says it.
+// A bare time for a warning that ends tomorrow night reads as tonight.
+QString until(const Preferences &prefs, const QDateTime &instant, const QDateTime &now,
+              const QTimeZone &zone)
+{
+    const QString time = clock(prefs, instant, zone);
+    const QDate   day  = instant.toTimeZone(zone).date();
+    if (!instant.isValid() || day == now.toTimeZone(zone).date())
+        return time;
+    return QLocale().toString(day, QStringLiteral("ddd")) + QLatin1Char(' ') + time;
+}
+
 QString condition(const WeatherCode &code, const std::optional<bool> &isDay)
 {
     return code.has_value() ? conditionText(*code, isDay.value_or(true)) : QString();
@@ -699,10 +711,28 @@ int printNow(const Forecast &forecast, const QString &servedBy, const QList<Aler
         out << " · " << shown(prefs, Q::Pressure, c.pressureMsl);
     out << '\n';
 
+    // No area is printed, so Seattle's three Air Quality Alerts, one per list of
+    // counties, came out as three identical lines. An identical line is printed
+    // once, with how many notices it stands for.
+    QStringList lines;
+    QList<int>  notices;
     for (const Alert &alert : alerts) {
-        out << "! " << alert.event << " (" << alertSeverityName(alert.severity) << ')';
+        QString line = alert.event + QStringLiteral(" (") + alertSeverityName(alert.severity)
+                       + QLatin1Char(')');
         if (alert.hazardEnd().isValid())
-            out << " · until " << clock(prefs, alert.hazardEnd(), zone);
+            line += QStringLiteral(" · until ") + until(prefs, alert.hazardEnd(), now, zone);
+        const qsizetype seen = lines.indexOf(line);
+        if (seen >= 0) {
+            ++notices[seen];
+        } else {
+            lines.append(line);
+            notices.append(1);
+        }
+    }
+    for (qsizetype i = 0; i < lines.size(); ++i) {
+        out << "! " << lines.at(i);
+        if (notices.at(i) > 1)
+            out << " · " << notices.at(i) << " notices";
         out << '\n';
     }
 
