@@ -327,7 +327,7 @@ no Windows and no 22.04 userland. So the MSI, the portable ZIP and the AppImage
 have only ever been built on GitHub's runners.
 
 That building now works is recent. The first rehearsal of the release
-workflow, on 2026-09-30, failed on all three, and it took eight fixes to get
+workflow, on 2026-09-30, failed on all three, and it took six fixes to get
 them out: a relative install prefix Qt's deploy step refused, WiX 7's EULA, an
 XML comment WiX would not parse, two Qt plugins whose own libraries were not
 there, and an MSI that built with no program files in it and passed. The MSI
@@ -336,45 +336,3 @@ step now fails on any WiX warning, which is what that last one was.
 What is still open is the part a runner cannot do: install the MSI on Windows
 11 and start the app, and run the AppImage on a distribution other than
 Ubuntu. SmartScreen will warn on the MSI; that is its own entry above.
-
-## No release has ever been cut
-
-**Status: the pipeline is wired end to end and has never been run end to end.**
-
-There are no tags and no GitHub releases. That was not a decision, and it is
-worth writing down what was actually in the way, because none of it was visible
-from inside the repository:
-
-- `release-please` could not open its pull request. It ran on every push to
-  `main`, worked out the version, pushed its branch, and failed on the last
-  step with *GitHub Actions is not permitted to create or approve pull
-  requests* - a repository setting, not a file. Turned on 2026-09-19.
-- The app did not build against the Qt the floor names. `qmlcachegen` on 6.8
-  refuses a type annotation on a nested JavaScript function, so the Debian job
-  and the `.deb` release job had never once compiled the tree.
-- Three more jobs died at their Qt install step, on an aqtinstall module name
-  and an Android host name.
-- The release workflow waited for a pushed tag, and the tag `release-please`
-  makes is created with the workflow's own token, which starts no other
-  workflow. Merging the release PR would have published a release with nothing
-  attached. `release-please` now dispatches `release.yml` on the tag.
-- The first release would have been 0.2.0, with every commit since the
-  prototype as its changelog, old name included. It is now 0.1.0, and its
-  changelog starts at 2026-09-19.
-- CI on `main` was red on three more counts, found on 2026-09-30: an escape
-  sequence MSVC refuses in `tests/tst_settings.cpp`, a Qt 6.8.3 whose CMake
-  links an AGL framework the current macOS SDK no longer has, and a README
-  image that came out one level different on AMD and Intel runners.
-- Every published link names the repository `climat`, after the rename, and on
-  GitHub it is still called `clima`. Twelve dead links, all from that one
-  difference.
-
-All but the last are fixed. The last is one rename away and
-`scripts/check-urls.sh` refuses a release until it is done, because the thing
-it would otherwise publish is a store page whose homepage, bug tracker,
-privacy policy and four screenshots all 404.
-
-What closes this: renaming the repository, then merging the release PR for
-0.1.0 and fixing whatever the run says. Until then every claim in
-`docs/releasing.md` about what a release carries is a claim about a workflow
-rather than about a release.

@@ -92,6 +92,9 @@ All of them, with what would close each: [`docs/known-gaps.md`](docs/known-gaps.
 
 ## Install
 
+Every build is on the [latest release](https://github.com/JowiAoun/climat/releases/latest),
+with `SHA256SUMS` and build provenance beside it.
+
 ### Linux
 
 **Flatpak** is the primary channel. It brings its own Qt, so it works on any

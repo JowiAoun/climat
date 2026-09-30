@@ -17,7 +17,7 @@ Workflow permissions, "Allow GitHub Actions to create and approve pull
 requests". Without it `release-please` runs, works out the version, pushes its
 branch, and then fails on the last step with *GitHub Actions is not permitted to
 create or approve pull requests*. It did that on every push from the day it was
-added until 2026-09-19, which is why there is no release yet.
+added until 2026-09-19.
 
 **The repository name has to match the links in the tree.** Sixteen files carry
 the project URL: the AppStream component a software centre shows, the bug
@@ -185,14 +185,18 @@ release, which is how `release-please` starts it.
 
 ## The first release
 
-Nothing has been released yet, so `.release-please-manifest.json` says `0.0.0`.
-`initial-version` in `.github/release-please-config.json` makes the first
-release `0.1.0`, and `bootstrap-sha` starts its changelog at 2026-09-19, when
-the pipeline first worked. Without it the changelog would be every commit since
-the prototype. Both settings only apply while no release exists.
+0.1.0 was released on 2026-09-30. `initial-version` in
+`.github/release-please-config.json` is what made it `0.1.0` and not `0.2.0`,
+and `bootstrap-sha` started its changelog at 2026-09-19, when the pipeline
+first worked, instead of at the prototype. Both only apply while no release
+exists, so neither does anything now.
 
-The AppStream note for `0.1.0` is already written and dated 2026-09-30. If the
-first release PR is merged on another day, change the `date` to match.
+Before it, the release workflow was rehearsed from `main` and from a branch
+until every artefact built. That found eight faults: the `.deb` container had
+no `file` for CPack, the runner had no `eu-strip` for flatpak-builder, and six
+in the Windows and AppImage jobs that [`known-gaps.md`](known-gaps.md) lists.
+Rehearse the same way after any change to `release.yml`: dispatch it on a
+branch, and it builds, signs and attests everything and publishes nothing.
 
 ## When Flathub happens
 
