@@ -97,7 +97,12 @@ Item {
         text: [Engine.localTime,
               Engine.updatedLabel,
               Engine.fromFallback ? qsTr("via %1").arg(Engine.sourceName) : "",
-              Engine.problem].filter(function (s) { return s !== "" }).join("  ·  ")
+              Engine.problem,
+              // The first run, before there is anything to be stale: the one
+              // moment the card is empty, and it says why rather than sitting
+              // blank for the length of the retries.
+              !Engine.hasData && Engine.loading ? qsTr("Getting the forecast") : ""]
+            .filter(function (s) { return s !== "" }).join("  ·  ")
         color: Engine.stale || Engine.problem !== "" ? Theme.state.caution
                                                      : Theme.ink.muted
         Behavior on color {
@@ -186,6 +191,7 @@ Item {
             }
 
             Text {
+                visible: Engine.hasData
                 text: qsTr("Feels like %1").arg(Detail.feelsLike.reading)
                 color: Theme.ink.muted
                 font.pixelSize: Theme.type.heroLabel

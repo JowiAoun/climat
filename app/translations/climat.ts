@@ -530,6 +530,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Getting the forecast</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Feels like</source>
         <translation type="unfinished"></translation>
     </message>
@@ -990,6 +994,10 @@
     </message>
     <message>
         <source>via %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Getting the forecast</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

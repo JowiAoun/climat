@@ -126,7 +126,12 @@ Item {
         text: [Engine.localTime,
               Engine.updatedLabel,
               Engine.fromFallback ? qsTr("via %1").arg(Engine.sourceName) : "",
-              Engine.problem].filter(function (s) { return s !== "" }).join("  ·  ")
+              Engine.problem,
+              // The first run, before there is anything to be stale: the one
+              // moment the card is empty, and it says why rather than sitting
+              // blank for the length of the retries.
+              !Engine.hasData && Engine.loading ? qsTr("Getting the forecast") : ""]
+            .filter(function (s) { return s !== "" }).join("  ·  ")
         color: Engine.stale || Engine.problem !== "" ? Theme.state.caution
                                                      : Theme.ink.muted
         Behavior on color {
@@ -205,7 +210,11 @@ Item {
                 font.bold: true
             }
 
+            // Labels without their figures, before the first forecast, read as
+            // a card that broke. The six slugs below keep theirs: they are the
+            // shape of what is coming.
             Row {
+                visible: Engine.hasData
                 spacing: 8
                 Text {
                     text: qsTr("Feels like")
@@ -233,7 +242,7 @@ Item {
             spacing: 22
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            visible: parent.width > 620
+            visible: parent.width > 620 && Engine.hasData
 
             Repeater {
                 model: [{ label: qsTr("High"), value: Detail.temperature.high },
