@@ -83,6 +83,7 @@ the worst moment to notice it.
 | `climat.spdx` | `reuse spdx` | SBOM, from the SPDX headers CI already gates |
 | `THIRD-PARTY-LICENCES.txt` | `scripts/licence-bundle.sh` | |
 | `QT-SOURCE-OFFER.txt` | committed, copied | LGPLv3 obligation |
+| `COPYING.LESSER` | committed, copied | the LGPLv3 text, beside every build that bundles Qt |
 | build provenance | `actions/attest-build-provenance` | `gh attestation verify`, over everything in `dist/` |
 | the store screenshots | `scripts/store-shots.sh`, deployed to Pages | the four URLs the AppStream component declares |
 

@@ -5,10 +5,16 @@ SPDX-License-Identifier: CC0-1.0
                        OF THE Qt LIBRARIES IN CLIMAT
 
 Climat is built on the Qt framework, which is used here under the GNU Lesser
-General Public License, version 3 (LGPLv3). LGPLv3 incorporates section 6 of
-the GNU General Public License version 3, which requires that anyone who
-conveys the library in object-code form also convey the Corresponding Source,
-or accompany it with a written offer to supply that source.
+General Public License, version 3 (LGPLv3). The text of that licence is
+COPYING.LESSER. The Windows builds and the AppImage carry it beside the
+program, every release page carries it beside the Android package, and the
+program names Qt and its licence, and links to that text, in the About group
+of its preferences.
+
+LGPLv3 incorporates section 6 of the GNU General Public License version 3,
+which requires that anyone who conveys the library in object-code form also
+convey the Corresponding Source, or accompany it with a written offer to
+supply that source.
 
 A hyperlink to qt.io does not discharge that obligation. GPLv3 section 6
 permits pointing at a third-party server only when the object code was itself

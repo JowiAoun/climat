@@ -223,12 +223,13 @@ jobs:
 
       # The AppImage bundles Qt, so it conveys it, so it carries the offer and
       # the licence bundle. Same obligation as the Windows artefacts and the
-      # same two files.
+      # same two files. COPYING.LESSER is the LGPLv3 text itself, which section
+      # 4(b) asks to travel with Qt as the GPL text travels with the app.
       - name: Add the licence files a bundled Qt requires
         run: |
           scripts/licence-bundle.sh AppDir/THIRD-PARTY-LICENCES.txt
           cp packaging/QT-SOURCE-OFFER.txt AppDir/
-          cp LICENSE AppDir/
+          cp LICENSE COPYING.LESSER AppDir/
 
       - name: Package
         env:
@@ -299,7 +300,7 @@ jobs:
         run: |
           scripts/licence-bundle.sh stage/THIRD-PARTY-LICENCES.txt
           cp packaging/QT-SOURCE-OFFER.txt stage/
-          cp LICENSE stage/
+          cp LICENSE COPYING.LESSER stage/
 
       - name: Portable ZIP
         shell: pwsh
@@ -556,7 +557,7 @@ jobs:
           mkdir -p meta
           nix develop --command reuse spdx -o meta/climat.spdx
           nix develop --command scripts/licence-bundle.sh meta/THIRD-PARTY-LICENCES.txt
-          cp packaging/QT-SOURCE-OFFER.txt meta/
+          cp packaging/QT-SOURCE-OFFER.txt COPYING.LESSER meta/
 
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
