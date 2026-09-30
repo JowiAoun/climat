@@ -140,6 +140,9 @@ private Q_SLOTS:
     void theMoonFollowsTheHoursRatherThanTheCard();
     void theLastLabelDoesNotReadPastItsOwnDay();
 
+    void theCalendarRunsIntoNextMonthAsFarAsTheForecast();
+    void aForecastInsideTheMonthAddsNoNextMonth();
+
 private:
     // One fixture, loaded once: Toronto is the one every capture uses and its
     // recorded instant is midday, which is the only interesting case - a
@@ -758,6 +761,47 @@ void TestForecastData::theLastLabelDoesNotReadPastItsOwnDay()
                                 .arg(day)
                                 .arg(drawn, QStringList(mine.values()).join(QLatin1Char(',')))));
     }
+}
+
+// ---- the calendar ------------------------------------------------------------
+//
+// Toronto is recorded on July 31. A calendar of July alone showed three days
+// with numbers in them and hid the thirteen the forecast has in August.
+void TestForecastData::theCalendarRunsIntoNextMonthAsFarAsTheForecast()
+{
+    ForecastData data(nullptr);
+    load(data);
+
+    const QVariantList july = data.monthDays();
+    QCOMPARE(july.size(), 31);
+    QVERIFY(july.last().toMap().value(QStringLiteral("isToday")).toBool());
+    QVERIFY(july.last().toMap().value(QStringLiteral("known")).toBool());
+
+    QCOMPARE(data.nextMonth().value(QStringLiteral("number")).toInt(), 8);
+    const QVariantList august = data.nextMonthDays();
+    QVERIFY(!august.isEmpty());
+    QCOMPARE(august.first().toMap().value(QStringLiteral("date")).toInt(), 1);
+    for (const QVariant &cell : august)
+        QVERIFY2(cell.toMap().value(QStringLiteral("known")).toBool(),
+                 "the next month runs past the forecast's last day");
+    QCOMPARE(august.last().toMap().value(QStringLiteral("date")).toInt(),
+             m_forecast.daily.last().date.day());
+
+    // Further than the day strip reaches: the calendar reads the whole forecast,
+    // not the eleven days the strip trims it to.
+    QVERIFY(1 + august.size() > data.days().size() - data.todayIndex());
+}
+
+// A week into August the same forecast ends inside the month it is in, and
+// there is no next month to show.
+void TestForecastData::aForecastInsideTheMonthAddsNoNextMonth()
+{
+    ForecastData data(nullptr);
+    data.setSnapshot(m_forecast, m_air, m_fixture.recordedAt.addDays(6), m_fixture.place);
+
+    QCOMPARE(data.month().value(QStringLiteral("number")).toInt(), 8);
+    QVERIFY(data.nextMonthDays().isEmpty());
+    QCOMPARE(data.nextMonth().value(QStringLiteral("name")).toString(), QString());
 }
 
 QTEST_MAIN(TestForecastData)

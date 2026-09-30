@@ -204,12 +204,14 @@ void ForecastData::clear()
     m_nowAbsolute = 0;
     clearWindow();
     m_days.clear(); m_dayDates.clear(); m_todayIndex = 0; m_selectedDay = 0;
-    m_monthDays.clear();
+    m_monthDays.clear(); m_nextMonthDays.clear();
+    m_allDays.clear(); m_allDates.clear();
 
     // Reset to a shape rather than emptied, for the reason the two functions
     // give. buildMonth() and buildSunEvents() overwrite these keys in place, so
     // the neutral values survive only until there is a forecast to replace them.
     m_month     = neutralMonth();
+    m_nextMonth = neutralMonth();
     m_moonPhase = neutralMoonPhase();
 }
 
@@ -558,6 +560,9 @@ void ForecastData::buildDays(const QDateTime &now)
         allDates.append(day.date);
     }
 
+    m_allDays  = all;
+    m_allDates = allDates;
+
     if (todayRow < 0) {
         m_days       = all;
         m_dayDates   = allDates;
@@ -586,36 +591,57 @@ void ForecastData::buildMonth(const QDateTime &now)
     const QDate today = now.toTimeZone(m_zone).date();
     const QDate first(today.year(), today.month(), 1);
 
-    m_month[QStringLiteral("name")]   = QLocale().monthName(today.month(), QLocale::LongFormat);
-    m_month[QStringLiteral("year")]   = today.year();
-    m_month[QStringLiteral("number")] = today.month();
-    m_month[QStringLiteral("length")] = today.daysInMonth();
-    // 0 = Sunday, which is the convention weekdayNames() and the calendar grid
-    // share. Qt counts Monday as 1 and Sunday as 7.
-    m_month[QStringLiteral("firstWeekday")] = first.dayOfWeek() % 7;
-    m_month[QStringLiteral("today")]        = today.day();
+    const auto describe = [](QVariantMap &month, QDate start) {
+        month[QStringLiteral("name")]   = QLocale().monthName(start.month(), QLocale::LongFormat);
+        month[QStringLiteral("year")]   = start.year();
+        month[QStringLiteral("number")] = start.month();
+        month[QStringLiteral("length")] = start.daysInMonth();
+        // 0 = Sunday, which is the convention weekdayNames() and the calendar
+        // grid share. Qt counts Monday as 1 and Sunday as 7.
+        month[QStringLiteral("firstWeekday")] = start.dayOfWeek() % 7;
+    };
 
-    for (int d = 1; d <= today.daysInMonth(); ++d) {
-        const QDate      date  = QDate(today.year(), today.month(), d);
-        const QVariantMap known = dayFor(d, today.month());
+    describe(m_month, first);
+    m_month[QStringLiteral("today")] = today.day();
+    for (QDate date = first; date.month() == first.month(); date = date.addDays(1))
+        m_monthDays.append(calendarCell(date, today));
 
-        QVariantMap cell;
-        cell[QStringLiteral("date")]    = d;
-        cell[QStringLiteral("weekday")] = shortWeekday(date);
-        cell[QStringLiteral("isToday")] = date == today;
+    // The next month only as far as the forecast reaches into it. A whole month
+    // of empty cells after the last forecast day would be the same empty page
+    // this exists to fill, one screen further down.
+    QDate last;
+    for (const QDate &date : std::as_const(m_allDates))
+        last = qMax(last, date);
 
-        // A day outside the forecast horizon carries no numbers, and the
-        // calendar draws the cell empty. mockdata.js generated a plausible
-        // seasonal shape for those days; a real calendar must not, because a
-        // high for the 29th that nobody forecast is a number a reader will
-        // plan around. docs/08-risks.md R9.
-        cell[QStringLiteral("high")] = known.value(QStringLiteral("high"), QVariant());
-        cell[QStringLiteral("low")]  = known.value(QStringLiteral("low"), QVariant());
-        cell[QStringLiteral("icon")] = known.value(QStringLiteral("icon"), QString());
-        cell[QStringLiteral("known")] = !known.isEmpty();
-
-        m_monthDays.append(cell);
+    const QDate next = first.addMonths(1);
+    if (last >= next) {
+        describe(m_nextMonth, next);
+        m_nextMonth[QStringLiteral("today")] = 0;
+        for (QDate date = next; date <= last && date.month() == next.month(); date = date.addDays(1))
+            m_nextMonthDays.append(calendarCell(date, today));
     }
+}
+
+QVariantMap ForecastData::calendarCell(QDate date, QDate today) const
+{
+    const qsizetype row = m_allDates.indexOf(date);
+    const QVariantMap known = row < 0 ? QVariantMap() : m_allDays.at(row).toMap();
+
+    QVariantMap cell;
+    cell[QStringLiteral("date")]    = date.day();
+    cell[QStringLiteral("weekday")] = shortWeekday(date);
+    cell[QStringLiteral("isToday")] = date == today;
+
+    // A day outside the forecast horizon carries no numbers, and the calendar
+    // draws the cell empty. mockdata.js generated a plausible seasonal shape
+    // for those days; a real calendar must not, because a high for the 29th
+    // that nobody forecast is a number a reader will plan around.
+    // docs/08-risks.md R9.
+    cell[QStringLiteral("high")]  = known.value(QStringLiteral("high"), QVariant());
+    cell[QStringLiteral("low")]   = known.value(QStringLiteral("low"), QVariant());
+    cell[QStringLiteral("icon")]  = known.value(QStringLiteral("icon"), QString());
+    cell[QStringLiteral("known")] = !known.isEmpty();
+    return cell;
 }
 
 QVariantMap ForecastData::dayFor(int date, int month) const

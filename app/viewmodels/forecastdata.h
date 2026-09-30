@@ -191,6 +191,11 @@ class ForecastData : public QObject
     // ---- the calendar ------------------------------------------------------
     Q_PROPERTY(QVariantMap month READ month NOTIFY changed)
     Q_PROPERTY(QVariantList monthDays READ monthDays NOTIFY changed)
+    // The month after, as far as the forecast reaches into it, and empty until
+    // it does. On the 31st the month above has one day left and a sixteen-day
+    // forecast has fifteen more: they are here, where the calendar can show them.
+    Q_PROPERTY(QVariantMap nextMonth READ nextMonth NOTIFY changed)
+    Q_PROPERTY(QVariantList nextMonthDays READ nextMonthDays NOTIFY changed)
     Q_PROPERTY(QVariantList weekdayNames READ weekdayNames CONSTANT)
 
     // ---- the sky -----------------------------------------------------------
@@ -288,6 +293,8 @@ public:
 
     [[nodiscard]] QVariantMap  month() const { return m_month; }
     [[nodiscard]] QVariantList monthDays() const { return m_monthDays; }
+    [[nodiscard]] QVariantMap  nextMonth() const { return m_nextMonth; }
+    [[nodiscard]] QVariantList nextMonthDays() const { return m_nextMonthDays; }
     [[nodiscard]] QVariantList weekdayNames() const;
 
     [[nodiscard]] QVariantList sunEvents() const { return m_sunEvents; }
@@ -368,6 +375,7 @@ private:
     void buildLabels();
     void buildDays(const QDateTime &now);
     void buildMonth(const QDateTime &now);
+    [[nodiscard]] QVariantMap calendarCell(QDate date, QDate today) const;
     void buildSunEvents();
     void buildBuckets();
 
@@ -422,6 +430,13 @@ private:
 
     QVariantMap  m_month;
     QVariantList m_monthDays;
+    QVariantMap  m_nextMonth;
+    QVariantList m_nextMonthDays;
+
+    // Every day the provider sent, before `m_days` trims them to the day strip's
+    // eleven. The calendar reads these, so it shows the whole forecast.
+    QVariantList m_allDays;
+    QList<QDate> m_allDates;
 
     QVariantList m_sunEvents;
     QVariantMap  m_moonPhase;

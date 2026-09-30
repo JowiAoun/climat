@@ -23,11 +23,14 @@ import QtQuick
 Item {
     id: root
 
+    // This month's days unless the page hands it the next month's.
+    property var days: Data.monthDays
+
     readonly property int columns: 4
     readonly property real cellWidth: Math.floor(width / columns)
     readonly property real cellHeight: 84
 
-    readonly property int rows: Math.ceil(Data.monthDays.length / columns)
+    readonly property int rows: Math.ceil(root.days.length / columns)
 
     implicitHeight: rows * cellHeight
     height: implicitHeight
@@ -37,7 +40,7 @@ Item {
         columns: root.columns
 
         Repeater {
-            model: Data.monthDays
+            model: root.days
 
             delegate: Item {
                 id: cell
