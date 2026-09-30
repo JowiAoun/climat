@@ -178,13 +178,9 @@ jobs:
 
   # ---- the portable Linux build ----------------------------------------------
   #
-  # NEVER RUN. This job was written in an environment with no way to execute it
-  # - no linuxdeploy, no 22.04 userland - so it is a first draft rather than a
-  # check that passed, and it is `continue-on-error` for exactly that reason: a
-  # release with a working .deb, Flatpak and MSI should not be blocked by the
-  # P1 artefact. The publish job reports whether it arrived, so a silent
-  # absence is not possible. Move it into the required set in the commit that
-  # makes it green.
+  # Written where nothing could run it, so it was `continue-on-error` until it
+  # built one. That was a rehearsal on 2026-09-30, after the two plugin fixes
+  # below, and it is an ordinary required job from then on.
   #
   # 22.04 for glibc 2.35: an AppImage runs on any distribution whose glibc is
   # at least as new as the one it was built against, so the build environment
@@ -193,7 +189,6 @@ jobs:
   appimage:
     name: .AppImage (glibc 2.35)
     runs-on: ubuntu-22.04
-    continue-on-error: true
     needs: [check]
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -631,11 +626,10 @@ jobs:
       #
       # It used to be a list of five globs, one per artefact, and that was a
       # release-breaking bug rather than an untidy one: this action fails when a
-      # subject path matches nothing, the AppImage job is `continue-on-error` by
-      # design, and this step runs before `gh release upload`. So the first
-      # release where the P1 artefact did not build would have attested nothing
-      # and published nothing, over an artefact the file above says is allowed
-      # to be missing.
+      # subject path matches nothing, this job runs after a failed build job
+      # too, and this step runs before `gh release upload`. So the first
+      # release where one artefact did not build would have attested nothing
+      # and published nothing.
       #
       # Attesting the SBOM, the licence bundle and SHA256SUMS along with the
       # binaries is not a side effect worth avoiding either. They are published
