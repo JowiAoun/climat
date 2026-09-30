@@ -74,12 +74,14 @@ if it were a feature list is the thing this project is trying not to be.
   what is missing is notarisation, which needs an Apple Developer ID, and
   without it Gatekeeper refuses a downloaded app rather than warning about it.
 - **The Windows build is unsigned**, so SmartScreen warns on first run.
-- **Android is plumbed and has never run on a device.** The gate is delivering
-  an alert to a sleeping phone, which Qt has no answer for. The desktop answer
-  above does not port: it is a session bus and a window that can be hidden.
+- **Android warns you only while the app is open.** The package builds, signs,
+  installs and runs on an emulator, and has not yet been checked on a physical
+  phone. Delivering an alert to a sleeping phone is the gate, and Qt has no
+  answer for it. The desktop answer above does not port: it is a session bus
+  and a window that can be hidden.
 
 - **No translations.** Every string is marked and the catalogue is kept current
-  by CI (271 of them), and not one language has been translated. A machine
+  by CI (312 of them), and not one language has been translated. A machine
   translation would be worse than none.
 - **The widgets have never been pinned on a KDE session.** They pin themselves
   on GNOME, which was measured by hand, and on wlroots, which is measured in CI
@@ -195,7 +197,8 @@ CMake options.
 nix develop --command ctest --test-dir build/dev --output-on-failure
 ```
 
-25 test binaries; 265 QML assertions; 46 golden images compared byte for byte.
+42 tests, 318 QML assertions among them, and 53 golden images compared byte
+for byte.
 The component gallery is a second binary and the fastest way to look at
 anything in isolation:
 
@@ -228,8 +231,9 @@ services; [MET Norway](https://api.met.no/) as fallback; alerts from
 the [US National Weather Service](https://api.weather.gov/) (public domain);
 place names from [GeoNames](https://www.geonames.org/) (CC-BY 4.0).
 
-Every source is credited at runtime under **About → Data sources**, generated
-from the provider registry rather than maintained by hand. The full record is in
+Every source is credited at runtime under **Data sources**, in Preferences on
+the desktop and on the Me tab on a phone, generated from the provider registry
+rather than maintained by hand. The full record is in
 [`docs/02-data-sources.md`](docs/02-data-sources.md) §2.9.
 
 ## Licence

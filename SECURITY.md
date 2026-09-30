@@ -59,9 +59,10 @@ already on disk:
   exploitation of it is very welcome.
 - **Alerts may be late or missing.** This app is not a life-safety system and
   says so. Severe weather warnings are shown as the issuing authority published
-  them, but polling stops when the window is hidden, and there is no background
-  delivery on Android at all. Do not rely on it for a tornado warning - use the
-  authority's own channel.
+  them, but the app checks only while it is running: every few minutes with the
+  window open, and every 15 minutes with it hidden only if you turned on
+  warnings in Preferences. There is no background delivery on Android at all.
+  Do not rely on it for a tornado warning - use the authority's own channel.
 - **Coordinates are sent to weather services.** That is how a forecast is
   fetched. They are sent at four decimal places to the providers named under
-  About → Data sources and nowhere else.
+  Data sources in Preferences and nowhere else.
