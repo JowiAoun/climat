@@ -776,6 +776,7 @@ QtObject {
         readonly property int heroReading:  Tokens.type.heroReading
         readonly property int heroUnit:     Tokens.type.heroUnit
         readonly property int heroCaption:  Tokens.type.heroCaption
+        readonly property int heroCaptionLong: Tokens.type.heroCaptionLong
         readonly property int heroDetail:   Tokens.type.heroDetail
         readonly property int heroLabel:    Tokens.type.heroLabel
     }

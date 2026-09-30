@@ -651,6 +651,7 @@ var type = {
     heroReading: 64,
     heroUnit:    34,   // the degree suffix riding on it
     heroCaption: 32,   // the condition beside it
+    heroCaptionLong: 24, // the same, when it runs to two lines on a phone
     heroDetail:  18,   // the outlook sentence, and each value in the slug row
     heroLabel:   14    // a slug's label
 };

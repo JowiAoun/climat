@@ -151,22 +151,35 @@ Item {
             anchors.topMargin: Math.round(Theme.type.heroReading * 0.13)
         }
 
-        // Takes whatever is left and elides. "Sunny" fits at any width this
-        // shell runs at; "Thunderstorms in the area" does not, and a condition
-        // that wraps to two lines would push the glyph and the number apart.
+        // Takes whatever is left. "Sunny" fits on one line at full size, and
+        // on a 390 px phone "Mainly sunny" did not: it elided to "Mainly s…",
+        // and so would most names past seven letters. A name that does not fit
+        // steps down to `heroCaptionLong` and may take two lines, which still
+        // sits inside the number's height, so nothing beside it moves.
         Column {
+            id: conditionColumn
             spacing: 2
             anchors.left: unit.right
             anchors.leftMargin: 14
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
 
+            TextMetrics {
+                id: conditionAtFullSize
+                text: Detail.cloudCover.condition
+                font.pixelSize: Theme.type.heroCaption
+                font.bold: true
+            }
+
             Text {
                 text: Detail.cloudCover.condition
                 color: Theme.ink.primary
-                font.pixelSize: Theme.type.heroCaption
+                font.pixelSize: conditionAtFullSize.advanceWidth <= conditionColumn.width
+                                ? Theme.type.heroCaption : Theme.type.heroCaptionLong
                 font.bold: true
                 width: parent.width
+                wrapMode: Text.WordWrap
+                maximumLineCount: 2
                 elide: Text.ElideRight
             }
 
