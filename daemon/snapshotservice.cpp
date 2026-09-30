@@ -414,14 +414,10 @@ void SnapshotService::warmFromCache(Watched &watched)
             continue;
         }
 
-        // By value, and that is not a style choice. QFuture::result() returns a
-        // Result BY VALUE, and Result::value() hands back a reference into it -
-        // so `const AlertSet &part = answer.result().value();` binds to a
-        // temporary that is destroyed at the end of that statement, and every
-        // read of it afterwards is a use-after-free. It survives only while the
-        // freed stack slot happens to still hold the old bits. The forecast and
-        // air-quality loops above already take theirs by value; this is the
-        // same, and it also drops the second full copy the old line made.
+        // One copy, checked and then read. QFuture::result() returns the
+        // Result by value, so calling it once for the check and again for the
+        // set would copy every alert twice. The forecast and air-quality loops
+        // above take theirs the same way.
         const Result<AlertSet> result = answer.result();
         if (!result) {
             allAnswered = false;

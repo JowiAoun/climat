@@ -63,6 +63,13 @@ public:
     // that and it is `if (!result) return result.error();`.
     [[nodiscard]] const T &value() const & { return std::get<T>(m_state); }
     [[nodiscard]] T       &value() & { return std::get<T>(m_state); }
+
+    // On a temporary, the value itself rather than a reference into it. A
+    // reference outlives the Result it points into: `for (x : f().value())`
+    // walked freed memory, and on macOS read back three blank places where
+    // Linux happened to still hold the old bytes. By value, a loop or a
+    // `const T &` keeps it alive the way it keeps any temporary.
+    [[nodiscard]] T        value() && { return std::move(std::get<T>(m_state)); }
     [[nodiscard]] T        takeValue() { return std::move(std::get<T>(m_state)); }
 
     // Safe to call in either state: a successful Result reports a default
