@@ -354,15 +354,27 @@ from inside the repository:
   and the `.deb` release job had never once compiled the tree.
 - Three more jobs died at their Qt install step, on an aqtinstall module name
   and an Android host name.
+- The release workflow waited for a pushed tag, and the tag `release-please`
+  makes is created with the workflow's own token, which starts no other
+  workflow. Merging the release PR would have published a release with nothing
+  attached. `release-please` now dispatches `release.yml` on the tag.
+- The first release would have been 0.2.0, with every commit since the
+  prototype as its changelog, old name included. It is now 0.1.0, and its
+  changelog starts at 2026-09-19.
+- CI on `main` was red on three more counts, found on 2026-09-30: an escape
+  sequence MSVC refuses in `tests/tst_settings.cpp`, a Qt 6.8.3 whose CMake
+  links an AGL framework the current macOS SDK no longer has, and a README
+  image that came out one level different on AMD and Intel runners.
 - Every published link names the repository `climat`, after the rename, and on
-  GitHub it is still called `clima`. Thirteen dead links, twelve of them from
-  that one difference.
+  GitHub it is still called `clima`. Twelve dead links, all from that one
+  difference.
 
-The first four are fixed. The last is one rename away and
+All but the last are fixed. The last is one rename away and
 `scripts/check-urls.sh` refuses a release until it is done, because the thing
 it would otherwise publish is a store page whose homepage, bug tracker,
 privacy policy and four screenshots all 404.
 
-What closes this: cutting 0.2.0 and fixing whatever the run says. Until then
-every claim in `docs/releasing.md` about what a release carries is a claim
-about a workflow rather than about a release.
+What closes this: renaming the repository, then merging the release PR for
+0.1.0 and fixing whatever the run says. Until then every claim in
+`docs/releasing.md` about what a release carries is a claim about a workflow
+rather than about a release.
