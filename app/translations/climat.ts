@@ -471,7 +471,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 from %2</source>
+        <source>%1 from %2.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

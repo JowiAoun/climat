@@ -14,6 +14,7 @@
 #include "libclimat/domain/weathercode.h"
 
 #include <QLocale>
+#include <QRegularExpression>
 #include <QStringList>
 #include <QQmlEngine>
 
@@ -64,6 +65,17 @@ QString sentenceTime(const QDateTime &instant, const QTimeZone &zone)
     if (!instant.isValid())
         return {};
     return TimeFormat::instance()->sentence(instant.toTimeZone(zone).time());
+}
+
+// That spelling ends in a full stop of its own, so a sentence that closes on a
+// time, "Clearest around %1.", printed "p.m.." on a 12-hour clock. Dropping the
+// template's stop is no fix: a 24-hour clock says "15:00", which needs one. So
+// every template keeps its stop and a sentence is passed through here once it is
+// built. Exactly two stops become one; an ellipsis is left alone.
+QString oneStop(QString sentence)
+{
+    static const QRegularExpression doubled(QStringLiteral("(?<!\\.)\\.\\.(?!\\.)"));
+    return sentence.replace(doubled, QStringLiteral("."));
 }
 
 // ---- the published scales ---------------------------------------------------
@@ -729,9 +741,9 @@ void ConditionsData::buildTemperature()
                                     : trend == QLatin1String("down") ? tr("Falling")
                                                                      : tr("Steady") },
         { QStringLiteral("body"),
-          tr("Peaks at %1%2 around %3. Overnight low of %4%2 at %5.")
-              .arg(high).arg(unit).arg(sentenceTime(peakAt, m_zone))
-              .arg(low).arg(sentenceTime(lowAt, m_zone)) },
+          oneStop(tr("Peaks at %1%2 around %3. Overnight low of %4%2 at %5.")
+                      .arg(high).arg(unit).arg(sentenceTime(peakAt, m_zone))
+                      .arg(low).arg(sentenceTime(lowAt, m_zone))) },
     };
 }
 
@@ -837,8 +849,8 @@ void ConditionsData::buildPrecipitation()
         ? tr("Nothing falling in the next 24 hours.")
         : (startsAt == m_hourNow
                ? tr("Falling now, easing later.")
-               : tr("Dry now. Starts around %1.")
-                     .arg(sentenceTime(m_hours.at(startsAt).time, m_zone)));
+               : oneStop(tr("Dry now. Starts around %1.")
+                             .arg(sentenceTime(m_hours.at(startsAt).time, m_zone))));
 
     m_precipitation = QVariantMap{
         { QStringLiteral("value"), int(std::lround(units->convert(kind, totalMm))) },
@@ -979,9 +991,9 @@ void ConditionsData::buildUv()
         { QStringLiteral("status"), uvBand(qIsNaN(nowUv) ? 0 : nowUv) },
         { QStringLiteral("body"),
           peakAt.isValid()
-              ? tr("Today's maximum exposure is %1, expected at %2.")
-                    .arg(uvBand(qIsNaN(maxUv) ? peak : maxUv).toLower())
-                    .arg(sentenceTime(peakAt, m_zone))
+              ? oneStop(tr("Today's maximum exposure is %1, expected at %2.")
+                            .arg(uvBand(qIsNaN(maxUv) ? peak : maxUv).toLower())
+                            .arg(sentenceTime(peakAt, m_zone)))
               : tr("No ultraviolet reading for today.") },
     };
 }
@@ -1062,7 +1074,7 @@ void ConditionsData::buildVisibility()
         { QStringLiteral("trend"), trendOf(km, best, 1) },
         { QStringLiteral("status"), visibilityBand(km) },
         { QStringLiteral("body"),
-          clearestAt.isValid() ? tr("Clearest around %1.").arg(sentenceTime(clearestAt, m_zone))
+          clearestAt.isValid() ? oneStop(tr("Clearest around %1.").arg(sentenceTime(clearestAt, m_zone)))
                                : tr("No visibility reading for the hours ahead.") },
     };
 }
@@ -1157,8 +1169,8 @@ void ConditionsData::buildSunMoon()
                                                                           : tr("Night") },
         { QStringLiteral("body"),
           day.sunset.isValid()
-              ? tr("The sun is up for %1 hours and %2 minutes today, setting at %3.")
-                    .arg(dayHours).arg(dayMins).arg(sentenceTime(day.sunset, m_zone))
+              ? oneStop(tr("The sun is up for %1 hours and %2 minutes today, setting at %3.")
+                            .arg(dayHours).arg(dayMins).arg(sentenceTime(day.sunset, m_zone)))
               : tr("The sun does not set here today.") },
     };
 
@@ -1452,11 +1464,8 @@ void ConditionsData::buildSummary()
         peakMm = qMax(peakMm, m_hours.at(i).precipitation.value_or(0.0));
     }
 
-    // Assembled as whole sentences and joined, rather than concatenated with
-    // punctuation glued on. "9:00 a.m." already ends in a full stop, so a
-    // template that added one produced "from 9:00 a.m.." - the sort of thing
-    // that is invisible while the sentence is a literal in a mock file and
-    // unavoidable the moment it is generated.
+    // Assembled as whole sentences and joined. Each carries its own full stop,
+    // and oneStop() above folds it into the one a 12-hour time already ends in.
     QStringList sentences;
 
     if (!condition.isEmpty())
@@ -1470,8 +1479,8 @@ void ConditionsData::buildSummary()
         const QString weight = peakMm >= 7.6 ? tr("Heavy rain")
                                : peakMm >= 2.5 ? tr("Rain")
                                                : tr("Light rain");
-        sentences.append(
-            tr("%1 from %2").arg(weight, sentenceTime(m_hours.at(startsAt).time, m_zone)));
+        sentences.append(oneStop(
+            tr("%1 from %2.").arg(weight, sentenceTime(m_hours.at(startsAt).time, m_zone))));
     }
 
     if (day.temperatureMax) {

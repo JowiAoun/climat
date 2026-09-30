@@ -52,11 +52,14 @@
 // reason, without climat_forbid_gui.
 
 #include "conditionsdata.h"
+#include "settings.h"
 
 #include "libclimat/domain/hourconvention.h"
 #include "libclimat/domain/weathercode.h"
 #include "libclimat/providers/fixture/fixtureprovider.h"
 
+#include <QRegularExpression>
+#include <QScopeGuard>
 #include <QSet>
 #include <QStandardPaths>
 #include <QStringList>
@@ -74,6 +77,8 @@ private Q_SLOTS:
     void everyBlockCarriesItsKeysBeforeTheFirstSnapshot();
     void theConditionComesFromTheHourWeAreStandingIn();
     void aRainAlreadyFallingIsNotAnnouncedAsStartingLater();
+    void everySentenceEndsInOneFullStop_data();
+    void everySentenceEndsInOneFullStop();
     void nothingInTheNeutralShapeIsUndefined();
     void theNeutralShapeInventsNoWeather();
 
@@ -271,6 +276,81 @@ void TestConditionsData::aRainAlreadyFallingIsNotAnnouncedAsStartingLater()
              qPrintable(QStringLiteral(
                  "it is already raining and the card says \"%1\". A run that has "
                  "started has no onset to announce.").arg(summary)));
+}
+
+// ---- one full stop ---------------------------------------------------------
+//
+// A time inside a sentence is "3:00 p.m.", which ends in a stop of its own, so
+// every card whose sentence closed on a time printed "p.m.." - four at once on
+// the desktop. A 24-hour clock is the other half: "15:00" carries no stop, so
+// the template has to. Both clocks, and every sentence the cards and the
+// summary show.
+void TestConditionsData::everySentenceEndsInOneFullStop_data()
+{
+    QTest::addColumn<QString>("clock");
+    QTest::newRow("12h") << QStringLiteral("12h");
+    QTest::newRow("24h") << QStringLiteral("24h");
+}
+
+void TestConditionsData::everySentenceEndsInOneFullStop()
+{
+    QFETCH(QString, clock);
+    const QString before = Settings::instance()->clockFormat();
+    const auto restore = qScopeGuard([&before] { Settings::instance()->setClockFormat(before); });
+    Settings::instance()->setClockFormat(clock);
+
+    const Fixture fixture = fixtures::load(fixtures::defaultName());
+    QVERIFY(fixture.isValid());
+
+    ForecastRequest request;
+    request.coord = fixture.place.coordinate;
+
+    FixtureForecastProvider   forecasts(fixture);
+    FixtureAirQualityProvider air(fixture);
+    Forecast forecast = forecasts.fetchForecast(request).result().value();
+    const AirQuality quality = air.fetchAirQuality(request).result().value();
+
+    // Rain that starts a few hours out, so the summary and the precipitation
+    // card both have an onset to name. Indices as in the test above.
+    const QList<HourlyPoint> hours = asHourStarting(forecast.hourly);
+    int standing = 0;
+    for (int i = 0; i < hours.size(); ++i) {
+        if (hours.at(i).time <= fixture.recordedAt)
+            standing = i;
+        else
+            break;
+    }
+    for (int i = standing + 4; i < qMin(int(forecast.hourly.size()), standing + 8); ++i)
+        forecast.hourly[i].precipitation = 3.0;
+
+    ConditionsData data(nullptr);
+    data.setSnapshot(forecast, quality, fixture.recordedAt, fixture.place, /*hasPollen=*/false);
+
+    QStringList sentences{ data.current().value(QStringLiteral("summary")).toString() };
+    for (const Block &block : blocks())
+        sentences.append((data.*block.second)().value(QStringLiteral("body")).toString());
+
+    static const QRegularExpression doubled(QStringLiteral("(?<!\\.)\\.\\.(?!\\.)"));
+    static const QRegularExpression time(QStringLiteral("\\d:\\d\\d"));
+    // "from 16:00 The high will be": the summary joins sentences, so a stop
+    // missing from one is in the middle of the string, not at its end.
+    static const QRegularExpression runOn(QStringLiteral("\\d:\\d\\d\\s+\\p{Lu}"));
+    int timed = 0;
+    for (const QString &sentence : std::as_const(sentences)) {
+        if (sentence.isEmpty())
+            continue;
+        QVERIFY2(!doubled.match(sentence).hasMatch(),
+                 qPrintable(QStringLiteral("two full stops in \"%1\"").arg(sentence)));
+        QVERIFY2(sentence.endsWith(QLatin1Char('.')),
+                 qPrintable(QStringLiteral("no full stop at the end of \"%1\"").arg(sentence)));
+        QVERIFY2(!runOn.match(sentence).hasMatch(),
+                 qPrintable(QStringLiteral("a time runs into the next sentence in \"%1\"").arg(sentence)));
+        if (time.match(sentence).hasMatch())
+            ++timed;
+    }
+
+    // Seven of them name a time today. Fewer, and this proved less than it says.
+    QVERIFY2(timed >= 7, qPrintable(QStringLiteral("only %1 sentences named a time").arg(timed)));
 }
 
 void TestConditionsData::everyBlockCarriesItsKeysBeforeTheFirstSnapshot()
