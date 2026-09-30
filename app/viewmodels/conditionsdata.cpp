@@ -56,6 +56,18 @@ QString clockLabel(const QDateTime &instant, const QTimeZone &zone)
     return TimeFormat::instance()->clock(instant.toTimeZone(zone).time());
 }
 
+// A reading or a time set inside a sentence, held together. A card's body wraps,
+// and it wrapped "14 km/h" as "14 km/" and "h.", and "9:45 p.m." as "9:45" and
+// "p.m.". A no-break space keeps the parts on one line, and a word joiner after
+// each slash stops the break a slash allows. The joiner draws nothing: Qt hides
+// format characters unless a text option asks to see them.
+QString heldTogether(QString reading)
+{
+    reading.replace(QLatin1Char(' '), QChar(0x00A0));
+    reading.replace(QLatin1Char('/'), QStringLiteral("/\u2060"));
+    return reading;
+}
+
 // "3:00 p.m." - the reference's spelling for a sentence, as distinct from the
 // "3:00 PM" a label uses. detaildata.js used both, in the same two places, and
 // TimeFormat keeps the distinction because losing it would mean a body sentence
@@ -64,7 +76,7 @@ QString sentenceTime(const QDateTime &instant, const QTimeZone &zone)
 {
     if (!instant.isValid())
         return {};
-    return TimeFormat::instance()->sentence(instant.toTimeZone(zone).time());
+    return heldTogether(TimeFormat::instance()->sentence(instant.toTimeZone(zone).time()));
 }
 
 // That spelling ends in a full stop of its own, so a sentence that closes on a
@@ -931,11 +943,12 @@ void ConditionsData::buildWind()
         // out whether the card has anything to say.
         { QStringLiteral("status"), measured ? beaufortName(force) : tr("No reading") },
         { QStringLiteral("body"),
-          measured ? tr("%1 from the %2, gusting to %3 %4.")
+          measured ? tr("%1 from the %2, gusting to %3.")
                          .arg(beaufortName(force))
                          .arg(compassPoint(degrees))
-                         .arg(roundedDisplay(now.windGust, Units::Quantity::Wind))
-                         .arg(units->bareSymbol(Units::Quantity::Wind))
+                         .arg(heldTogether(QStringLiteral("%1 %2")
+                                               .arg(roundedDisplay(now.windGust, Units::Quantity::Wind))
+                                               .arg(units->bareSymbol(Units::Quantity::Wind))))
                    : QString() },
     };
 }

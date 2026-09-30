@@ -230,7 +230,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 from the %2, gusting to %3 %4.</source>
+        <source>%1 from the %2, gusting to %3.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
