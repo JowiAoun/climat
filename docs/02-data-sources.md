@@ -103,7 +103,7 @@ region-routed chain over CAP (Common Alerting Protocol):
 
 | Region | Source | Access | Licence |
 |---|---|---|---|
-| USA | NWS `api.weather.gov/alerts` (+ `alerts-v2.weather.gov`) | Free, no key, CAP XML + JSON, ATOM digest | US public domain |
+| USA | NWS `api.weather.gov/alerts` (+ `weather.gov/alerts`) | Free, no key, CAP XML + JSON, ATOM digest | US public domain |
 | Europe + UK + Israel | **MeteoAlarm** (EUMETNET) | Atom/CAP feeds per country and all-Europe; REST API portal at `api.meteoalarm.org` is aimed at member services - **confirm terms for third-party clients** ⚠️ | Per-country |
 | Canada | ECCC / MSC | CAP via MSC Open Data / GeoMet | OGL-Canada |
 | Norway | MET Alerts (api.met.no) | Free, UA required | CC-BY 4.0 |
@@ -177,7 +177,7 @@ Build this screen in **M1**, not at the end. It is a licence obligation, not pol
 
 - [Open-Meteo docs](https://open-meteo.com/en/docs) · [Air Quality API](https://open-meteo.com/en/docs/air-quality-api) · [Geocoding API](https://open-meteo.com/en/docs/geocoding-api) · [ECMWF API](https://open-meteo.com/en/docs/ecmwf-api) · [Ensemble API](https://open-meteo.com/en/docs/ensemble-api) · [Terms](https://open-meteo.com/en/terms) · [Pricing](https://open-meteo.com/en/pricing) · [open-meteo/open-meteo](https://github.com/open-meteo/open-meteo) · [Self-host getting started](https://github.com/open-meteo/open-meteo/blob/main/docs/getting-started.md)
 - [MET Norway Locationforecast 2.0](https://api.met.no/weatherapi/locationforecast/2.0/documentation) · [Terms of Service](https://api.met.no/doc/TermsOfService) · [FAQ](https://docs.api.met.no/doc/FAQ.html)
-- [api.weather.gov FAQs](https://weather-gov.github.io/api/general-faqs) · [NWS CAP](https://vlab.noaa.gov/web/nws-common-alerting-protocol) · [NWS Alerts v2](https://alerts-v2.weather.gov/)
+- [api.weather.gov FAQs](https://weather-gov.github.io/api/general-faqs) · [NWS CAP](https://vlab.noaa.gov/web/nws-common-alerting-protocol) · [NWS alerts](https://www.weather.gov/alerts)
 - [MeteoAlarm API portal](https://api.meteoalarm.org/) · [WMO SWIC CAP sources](https://severeweather.wmo.int/sources.html)
 - [RainViewer API](https://www.rainviewer.com/api.html) · [rainviewer-api-example](https://github.com/rainviewer/rainviewer-api-example)
 - [LibreWXR](https://librewxr.net/)
