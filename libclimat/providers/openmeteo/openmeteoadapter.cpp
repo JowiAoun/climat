@@ -212,8 +212,8 @@ Attribution attribution()
     // The exact sentence, from docs/02-data-sources.md §2.9. Not built from
     // `name`: the obligation is to this wording, and ".com" is part of it.
     credit.creditLine  = QStringLiteral("Weather data by Open-Meteo.com");
-    credit.homepage    = QUrl(QStringLiteral("https://open-meteo.com"));
-    credit.licenceName = QStringLiteral("CC-BY 4.0");
+    credit.homepage    = QUrl(QStringLiteral("https://open-meteo.com/"));
+    credit.licenceName = QStringLiteral("CC BY 4.0");
     credit.licenceUrl  = QUrl(QStringLiteral("https://creativecommons.org/licenses/by/4.0/"));
 
     // §2.9 again: "underlying model owners (ECMWF, NOAA, DWD, Météo-France, …)
