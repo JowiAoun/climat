@@ -77,6 +77,7 @@ private Q_SLOTS:
     void everyBlockCarriesItsKeysBeforeTheFirstSnapshot();
     void theConditionComesFromTheHourWeAreStandingIn();
     void aRainAlreadyFallingIsNotAnnouncedAsStartingLater();
+    void noAirQualityIsADashWithNoBand();
     void everySentenceEndsInOneFullStop_data();
     void everySentenceEndsInOneFullStop();
     void nothingInTheNeutralShapeIsUndefined();
@@ -276,6 +277,30 @@ void TestConditionsData::aRainAlreadyFallingIsNotAnnouncedAsStartingLater()
              qPrintable(QStringLiteral(
                  "it is already raining and the card says \"%1\". A run that has "
                  "started has no onset to announce.").arg(summary)));
+}
+
+// ---- no air quality ---------------------------------------------------------
+//
+// Kampala is outside the air-quality product. The hero and the card both read
+// `reading` and `band`: a dash in the text, and no band, so no coloured dot and
+// no marker. The hero used to put a green "good" dot beside the dash, and the
+// card a large "0" over the words "No reading".
+void TestConditionsData::noAirQualityIsADashWithNoBand()
+{
+    const Fixture fixture = fixtures::load(fixtures::defaultName());
+    QVERIFY(fixture.isValid());
+
+    ForecastRequest request;
+    request.coord = fixture.place.coordinate;
+    FixtureForecastProvider forecasts(fixture);
+    const Forecast forecast = forecasts.fetchForecast(request).result().value();
+
+    ConditionsData data(nullptr);
+    data.setSnapshot(forecast, AirQuality(), fixture.recordedAt, fixture.place, /*hasPollen=*/false);
+
+    const QVariantMap air = data.airQuality();
+    QCOMPARE(air.value(QStringLiteral("reading")).toString(), QStringLiteral("\u2014"));
+    QCOMPARE(air.value(QStringLiteral("band")).toString(), QString());
 }
 
 // ---- one full stop ---------------------------------------------------------

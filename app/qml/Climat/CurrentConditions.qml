@@ -61,8 +61,10 @@ Item {
     // is meaningless without its band, and a wind speed without a bearing is
     // half a reading.
     readonly property var slugs: [
+        // The dot is the band's colour, so it goes when there is no band: a
+        // place with no air-quality product showed a dash beside a green dot.
         { label: qsTr("Air quality"), value: Detail.airQuality.reading,
-          dot: true,  arrow: -1 },
+          dot: Detail.airQuality.band !== "",  arrow: -1 },
         { label: qsTr("Wind"),        value: Detail.wind.reading,
           dot: false, arrow: Detail.wind.directionDeg },
         { label: qsTr("Humidity"),    value: Detail.humidity.reading,

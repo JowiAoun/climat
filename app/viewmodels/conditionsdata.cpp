@@ -1048,7 +1048,7 @@ void ConditionsData::buildAirQuality()
         // "no air-quality product here" is not it. Every place that PRINTS the
         // index reads this; the numeric `value` above is for the ramps and the
         // bar, which need something finite to scale against.
-        { QStringLiteral("reading"), qIsNaN(index) ? QStringLiteral("-")
+        { QStringLiteral("reading"), qIsNaN(index) ? QStringLiteral("\u2014")
                                                    : QString::number(int(index)) },
         { QStringLiteral("max"), 100 },
         { QStringLiteral("band"), qIsNaN(index) ? QString() : aqiBand(index) },

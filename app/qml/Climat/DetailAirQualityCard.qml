@@ -182,8 +182,11 @@ DetailCard {
         }
 
         // Where the paint stops. Ringed in white so it separates from the band it
-        // has landed on instead of reading as a bulge in the ring.
+        // has landed on instead of reading as a bulge in the ring. Not there at
+        // all without a band, or a place with no air-quality product gets a
+        // marker sitting on "good".
         Rectangle {
+            visible: root.d.band !== ""
             width: viz.markSize; height: viz.markSize; radius: width / 2
             color: viz.markColor
             border.width: 2.5
@@ -197,8 +200,12 @@ DetailCard {
         // to one side leaves the ring circling nothing. This is the one stated
         // exception to the bottom-left rule (§10.7), and all three dials in the
         // grid take it.
+        //
+        // `reading` and not `value`: the same digits when there is an index,
+        // and a dash when there is none. `value` is 0 there, which put a big
+        // "0" over the words "No reading".
         Text {
-            text: root.d.value
+            text: root.d.reading
             color: Theme.ink.primary
             font.pixelSize: Theme.type.reading
             font.bold: true
