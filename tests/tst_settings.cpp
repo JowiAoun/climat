@@ -583,7 +583,7 @@ void TestSettings::aListEntryMayContainTheCharactersAnIniFileUsesItself()
         QStringLiteral("[bracketed]"),                        // a section header
         QStringLiteral("with\\backslashes"),
         QStringLiteral("with \"quotes\" in it"),
-        QStringLiteral("unit\x1fseparated\x1ffields"),
+        QStringLiteral("unit\x1f" "separated\x1f" "fields"),  // split, or \x1f eats the f after it
     };
 
     settings->setAcknowledgedAlerts(awkward);
