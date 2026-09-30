@@ -865,7 +865,7 @@ void ConditionsData::buildPrecipitation()
         { QStringLiteral("value"), int(std::lround(units->convert(kind, totalMm))) },
         { QStringLiteral("reading"), units->format(kind, totalMm) },
         { QStringLiteral("unit"), units->bareSymbol(kind) },
-        { QStringLiteral("window"), tr("In next 24h") },
+        { QStringLiteral("window"), tr("Next 24 hours") },
         // A thoroughly wet day, in the display unit: the ceiling the card draws
         // the amount against. 25 mm, which is detaildata.js's number and the
         // one its comment argues for.

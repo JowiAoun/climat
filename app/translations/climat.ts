@@ -206,7 +206,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>In next 24h</source>
+        <source>Next 24 hours</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -603,7 +603,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Relative Humidity</source>
+        <source>Relative humidity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -734,46 +734,46 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Wind Speed</source>
+        <source>Wind speed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Wind Gust</source>
+        <source>Wind gust</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ForecastData</name>
     <message>
-        <source>New Moon</source>
+        <source>New moon</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Waxing Crescent</source>
+        <source>Waxing crescent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>First Quarter</source>
+        <source>First quarter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Waxing Gibbous</source>
+        <source>Waxing gibbous</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Full Moon</source>
+        <source>Full moon</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Waning Gibbous</source>
+        <source>Waning gibbous</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Last Quarter</source>
+        <source>Last quarter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Waning Crescent</source>
+        <source>Waning crescent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -891,7 +891,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Air Quality</source>
+        <source>Air quality</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

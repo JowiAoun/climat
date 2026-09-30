@@ -166,7 +166,7 @@ DetailCard {
                 }
 
                 Text {
-                    text: qsTr("Relative Humidity")
+                    text: qsTr("Relative humidity")
                     color: Theme.ink.muted
                     font.pixelSize: Theme.type.label
                     width: parent.width

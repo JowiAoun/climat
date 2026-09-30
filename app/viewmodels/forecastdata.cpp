@@ -156,14 +156,14 @@ ForecastData *ForecastData::create(QQmlEngine *, QJSEngine *)
 // need the same sentence in the same language as the app.
 QString ForecastData::moonPhaseLabel(const QString &identifier)
 {
-    if (identifier == QLatin1String("new"))             return tr("New Moon");
-    if (identifier == QLatin1String("waxing-crescent")) return tr("Waxing Crescent");
-    if (identifier == QLatin1String("first-quarter"))   return tr("First Quarter");
-    if (identifier == QLatin1String("waxing-gibbous"))  return tr("Waxing Gibbous");
-    if (identifier == QLatin1String("full"))            return tr("Full Moon");
-    if (identifier == QLatin1String("waning-gibbous"))  return tr("Waning Gibbous");
-    if (identifier == QLatin1String("last-quarter"))    return tr("Last Quarter");
-    if (identifier == QLatin1String("waning-crescent")) return tr("Waning Crescent");
+    if (identifier == QLatin1String("new"))             return tr("New moon");
+    if (identifier == QLatin1String("waxing-crescent")) return tr("Waxing crescent");
+    if (identifier == QLatin1String("first-quarter"))   return tr("First quarter");
+    if (identifier == QLatin1String("waxing-gibbous"))  return tr("Waxing gibbous");
+    if (identifier == QLatin1String("full"))            return tr("Full moon");
+    if (identifier == QLatin1String("waning-gibbous"))  return tr("Waning gibbous");
+    if (identifier == QLatin1String("last-quarter"))    return tr("Last quarter");
+    if (identifier == QLatin1String("waning-crescent")) return tr("Waning crescent");
     return {};
 }
 

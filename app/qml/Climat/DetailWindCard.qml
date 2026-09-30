@@ -335,7 +335,7 @@ DetailCard {
                         font.pixelSize: Theme.type.label
                     }
                     Text {
-                        text: qsTr("Wind Speed")
+                        text: qsTr("Wind speed")
                         color: Theme.ink.muted
                         font.pixelSize: Theme.type.label
                     }
@@ -361,7 +361,7 @@ DetailCard {
                         font.pixelSize: Theme.type.label
                     }
                     Text {
-                        text: qsTr("Wind Gust")
+                        text: qsTr("Wind gust")
                         color: Theme.ink.muted
                         font.pixelSize: Theme.type.label
                     }

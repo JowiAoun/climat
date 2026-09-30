@@ -170,7 +170,7 @@ QVariantList Metrics::list() const
         out.append(wind);
     }
 
-    out.append(scaled(entry(QStringLiteral("airquality"), tr("Air Quality"), QStringLiteral("bars"),
+    out.append(scaled(entry(QStringLiteral("airquality"), tr("Air quality"), QStringLiteral("bars"),
                             QStringLiteral("airQuality"), Quantity::None, QStringLiteral("aqi"),
                             tr("European AQI")),
                       0, 100, 25, 0));
