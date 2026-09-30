@@ -12,6 +12,8 @@
 // scroll area gives the reader two things to drag and no way to tell which one
 // they got. The page owns the scrolling, and with it the layer that keeps these
 // cards' Shapes inside the viewport - see docs/10-design-system.md §10.8.
+pragma ComponentBehavior: Bound
+
 import QtQuick
 
 Item {
