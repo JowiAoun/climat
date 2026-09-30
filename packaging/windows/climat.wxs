@@ -36,10 +36,9 @@
   already run into it, plus the two licence files the LGPL requires beside a
   bundled Qt.
 
-  NOT VERIFIED. There is no MSVC and no Windows in the development environment
-  this was written in, so this file has never been compiled by `wix build`.
-  Treat the first release run as the test it has not had - the same footing
-  the Android job is on.
+  Built by the release workflow since 2026-09-30. There is no Windows in the
+  environment this was written in, so no person has installed the MSI yet;
+  docs/known-gaps.md keeps that open.
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
   <Package

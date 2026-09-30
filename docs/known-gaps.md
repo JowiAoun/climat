@@ -318,24 +318,24 @@ cannot satisfy the floor cannot prove the packager build path works.
 
 ---
 
-## The Windows and AppImage release jobs have never run
+## Nobody has installed the Windows build or run the AppImage
 
-**Status: written from documentation, executed never.**
+**Status: built by the release workflow, run by a person never.**
 
-The same footing as the Android job, and recorded here for the same reason. The
-development environment for this work is a Nix devshell on Linux: there is no
-MSVC, no Windows, no `wix`, and no 22.04 userland with `linuxdeploy` in it. So
-`packaging/windows/climat.wxs` has never been compiled by `wix build`, and the
-AppImage job has never produced an AppImage.
+The development environment for this work is a Nix devshell on Linux: there is
+no Windows and no 22.04 userland. So the MSI, the portable ZIP and the AppImage
+have only ever been built on GitHub's runners.
 
-Both are written against the documented behaviour of their tools, which is a
-first draft of a build rather than a check that passed. The AppImage job is
-`continue-on-error` so that a release with a working `.deb`, Flatpak and MSI is
-not blocked by the P1 artefact, and the publish job prints which artefacts
-arrived so that a missing one is stated rather than merely absent.
+That building now works is recent. The first rehearsal of the release
+workflow, on 2026-09-30, failed on all three, and it took eight fixes to get
+them out: a relative install prefix Qt's deploy step refused, WiX 7's EULA, an
+XML comment WiX would not parse, two Qt plugins whose own libraries were not
+there, and an MSI that built with no program files in it and passed. The MSI
+step now fails on any WiX warning, which is what that last one was.
 
-What closes it: one tagged release, and fixing whatever it says. Move the
-AppImage job into the required set in the commit that makes it green.
+What is still open is the part a runner cannot do: install the MSI on Windows
+11 and start the app, and run the AppImage on a distribution other than
+Ubuntu. SmartScreen will warn on the MSI; that is its own entry above.
 
 ## No release has ever been cut
 

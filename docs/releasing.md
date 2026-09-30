@@ -81,10 +81,10 @@ the worst moment to notice it.
 |---|---|---|
 | `climat_X.Y.Z_amd64.deb` | `debian:trixie` container | verified |
 | `climat-X.Y.Z-x86_64.flatpak` | `flatpak-builder` | verified |
-| `climat-X.Y.Z-windows-x64.msi` | WiX v5 on `windows-latest` | **never run** |
-| `climat-X.Y.Z-windows-x64.zip` | `Compress-Archive` on the staged install | **never run** |
-| `climat-X.Y.Z-x86_64.AppImage` | `linuxdeploy` on `ubuntu-22.04` | **never run**, `continue-on-error` |
-| `climat-X.Y.Z-android-arm64-v8a.aab` | Qt 6.11.1 for Android, NDK 27.2 | built locally 2026-09-17; signed only when the upload key is in the secrets |
+| `climat-X.Y.Z-windows-x64.msi` | WiX 5 on `windows-latest` | built since 2026-09-30, not yet installed by a person |
+| `climat-X.Y.Z-windows-x64.zip` | `Compress-Archive` on the staged install | built since 2026-09-30 |
+| `climat-X.Y.Z-x86_64.AppImage` | `linuxdeploy` on `ubuntu-22.04` | built since 2026-09-30, not yet run by a person |
+| `climat-X.Y.Z-android-arm64-v8a.aab` | Qt 6.11.1 for Android, NDK 27.2 | signed with the upload key in the secrets, which are set |
 | `climat-X.Y.Z-android-arm64-v8a.apk` | same build | for a phone on a cable, or F-Droid |
 | `LICENSE-OpenSSL.txt` | `scripts/android-openssl.sh` | the Android package carries OpenSSL |
 | `SHA256SUMS` | `sha256sum` | |
