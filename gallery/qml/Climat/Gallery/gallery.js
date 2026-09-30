@@ -436,6 +436,8 @@ var groups = [
               blurb: "Reads and writes the real preferences: switching one here changes the gallery's own window." },
             { name: "Units", file: "PrefUnits.qml", stage: { w: 520, h: 0 },
               blurb: "Two presets over five per-quantity preferences. Change one row and both radios empty - that state is `custom`, and it is the model being honest." },
+            { name: "Data sources", file: "SourcesList.qml", stage: { w: 488, h: 0 },
+              blurb: "Every source in its licence's own words. The desktop sheet and the Me tab show this same list." },
             { name: "Preference row", file: "PrefRow.qml", stage: { w: 460, h: 0 },
               blurb: "Title, sentence, control. The three shapes it takes; the control slot needs a Component, so the two groups above are where it is reviewed with one in it.",
               variants: [

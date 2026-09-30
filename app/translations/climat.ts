@@ -1018,10 +1018,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Models: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Showing the recorded “%1” fixture at its frozen clock. No network request was made for this forecast.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1247,6 +1243,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Data sources</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Saved in %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1259,6 +1259,13 @@
     </message>
     <message>
         <source>Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SourcesList</name>
+    <message>
+        <source>Models: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>

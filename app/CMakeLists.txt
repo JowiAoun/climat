@@ -94,6 +94,7 @@ set(climat_qml_files
     qml/Climat/SeriesArea.qml
     qml/Climat/SeverityGlyph.qml
     qml/Climat/SeriesBars.qml
+    qml/Climat/SourcesList.qml
     qml/Climat/ShellNav.qml
     qml/Climat/SkyArc.qml
     qml/Climat/SunEventGlyph.qml

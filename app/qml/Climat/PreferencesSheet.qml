@@ -140,6 +140,27 @@ Item {
                 PrefGeneral { width: parent.width }
                 PrefUnits { width: parent.width }
 
+                // The list the phone shows on its Me tab, inset the way a row
+                // is. Not a row itself: a credit is three or four lines and
+                // nothing to press.
+                PrefGroup {
+                    width: parent.width
+                    title: qsTr("Data sources")
+
+                    Item {
+                        width: parent.width
+                        implicitHeight: sources.implicitHeight + 24
+                        height: implicitHeight
+
+                        SourcesList {
+                            id: sources
+                            x: 16
+                            y: 12
+                            width: parent.width - 32
+                        }
+                    }
+                }
+
                 // Where the file is. The first question of every support
                 // conversation, and the answer is one a person can act on: open
                 // it, read line 4, delete it to start again.

@@ -157,62 +157,7 @@ MobilePage {
     MobileCard {
         width: root.spanWidth(1)
         title: qsTr("Data sources")
-        content: Column {
-            spacing: 12
-
-            Repeater {
-                model: Engine.sources
-
-                delegate: Column {
-                    required property var modelData
-
-                    width: parent ? parent.width : 0
-                    spacing: 2
-
-                    Text {
-                        // The exact sentence the licence asks for, not a
-                        // paraphrase built from the provider's name. Open-Meteo
-                        // wants "Weather data by Open-Meteo.com"; ECCC's
-                        // required wording, when that provider lands, is a
-                        // sentence nobody would guess.
-                        text: modelData.creditLine
-                        color: Theme.ink.primary
-                        font.pixelSize: Theme.type.status
-                        width: parent.width
-                        wrapMode: Text.WordWrap
-                    }
-
-                    Text {
-                        text: modelData.licenceName + "  ·  " + modelData.homepage
-                        color: Theme.ink.muted
-                        font.pixelSize: Theme.type.label
-                        width: parent.width
-                        elide: Text.ElideRight
-                    }
-
-                    Text {
-                        // §2.9 requires the model owners behind an aggregator to
-                        // be named separately, which is the part a paraphrase
-                        // would drop.
-                        visible: modelData.upstream.length > 0
-                        text: qsTr("Models: ") + modelData.upstream.join(", ")
-                        color: Theme.ink.dim
-                        font.pixelSize: Theme.type.label
-                        width: parent.width
-                        wrapMode: Text.WordWrap
-                    }
-
-                    Text {
-                        visible: modelData.note !== ""
-                        text: modelData.note
-                        color: Theme.ink.dim
-                        font.pixelSize: Theme.type.label
-                        width: parent.width
-                        wrapMode: Text.WordWrap
-                    }
-                }
-            }
-        }
+        content: SourcesList { }
     }
 
     // What this run is doing, said outright. Under `--fixture` every time on
