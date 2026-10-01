@@ -253,7 +253,7 @@ jobs:
       # dies before it downloads anything: "The packages ['qtdeclarative'] were
       # not found while parsing XML of package information!". That is what this
       # job did from the day it was written until 2026-09-19.
-      - uses: jurplel/install-qt-action@bcb88e3bed2e992f5f9e24c0f9e364a231d278eb # v4.4.0
+      - uses: jurplel/install-qt-action@a9c63c7c123f3069cff414e7e482d95dfa9d8125 # v4.4.1
         with:
           version: '6.8.3'
           modules: 'qtpositioning'
@@ -304,7 +304,7 @@ jobs:
       # source 6.8 release: "ld: framework 'AGL' not found". The 6.8 floor is
       # Debian's, and the Debian job above proves it. A Mac build carries its
       # own Qt, so it takes the one the devshell pins.
-      - uses: jurplel/install-qt-action@bcb88e3bed2e992f5f9e24c0f9e364a231d278eb # v4.4.0
+      - uses: jurplel/install-qt-action@a9c63c7c123f3069cff414e7e482d95dfa9d8125 # v4.4.1
         with:
           version: '6.11.1'
           modules: 'qtpositioning'
@@ -492,7 +492,7 @@ jobs:
       # second, because the second step's QT_ROOT_DIR is what the build reads
       # and the host is found as its gcc_64 sibling.
       - name: Install the host Qt
-        uses: jurplel/install-qt-action@bcb88e3bed2e992f5f9e24c0f9e364a231d278eb # v4.4.0
+        uses: jurplel/install-qt-action@a9c63c7c123f3069cff414e7e482d95dfa9d8125 # v4.4.1
         with:
           version: '6.11.1'
           host: linux
@@ -509,7 +509,7 @@ jobs:
       # desktop step above keeps `host: linux`, because a host Qt is a real
       # Linux build.
       - name: Install Qt for Android
-        uses: jurplel/install-qt-action@bcb88e3bed2e992f5f9e24c0f9e364a231d278eb # v4.4.0
+        uses: jurplel/install-qt-action@a9c63c7c123f3069cff414e7e482d95dfa9d8125 # v4.4.1
         with:
           version: '6.11.1'
           host: all_os
