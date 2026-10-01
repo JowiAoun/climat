@@ -22,6 +22,7 @@
 #include "libclimat/providers/nws/nwsalertprovider.h"
 #include "libclimat/providers/geocoding/openmeteogeocoder.h"
 #include "libclimat/providers/metno/metnoforecastprovider.h"
+#include "libclimat/providers/openmeteo/openmeteoconsensus.h"
 #include "libclimat/providers/openmeteo/openmeteoforecastprovider.h"
 #include "libclimat/providers/registry.h"
 
@@ -944,6 +945,16 @@ QVariantList AppEngine::sources() const
 
     for (const Attribution &credit : m_registry->attributions())
         out.append(attributionMap(credit));
+
+    // The two models averaged into a Canadian forecast. They are not providers
+    // either - Open-Meteo serves them - but their licences ask for their own
+    // credit. Live only: a recorded forecast is not averaged, so in fixture
+    // mode nothing on screen came from them.
+    if (!isFixtureMode() && m_clock != nullptr) {
+        for (const Attribution &credit :
+             openmeteo::consensusAttributions(m_clock->now().date().year()))
+            out.append(attributionMap(credit));
+    }
 
     // The place index is not a provider - it answers no forecast and is in no
     // chain - and it is bundled data under CC BY 4.0 all the same, so its

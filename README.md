@@ -217,8 +217,12 @@ disclosure chevron on every phone screen.
 
 C++20 engine (`libclimat`, GUI-free and enforced by a CMake assertion) under a
 **Qt 6.8+ / QML** interface, with a hand-written scene-graph chart kit.
-Open-Meteo is the primary forecast provider with MET Norway as a fallback;
-alerts are region-routed to ECCC and the NWS. Reverse geocoding is offline, from
+Open-Meteo is the primary forecast provider with MET Norway as a fallback.
+In Canada, temperature, humidity and wind are the average of Open-Meteo's best
+match, ECCC's GEM and ECMWF's IFS. Scored against ECCC's own station
+records, that cut the temperature error by about a fifth
+([`docs/02-data-sources.md`](docs/02-data-sources.md) §2.10). Alerts are
+region-routed to ECCC and the NWS. Reverse geocoding is offline, from
 a 412 KiB bundled GeoNames index, so turning a coordinate into "Toronto,
 Ontario" never leaves the machine.
 
@@ -229,7 +233,8 @@ to a public weather service, and nothing goes anywhere else.
 
 Weather from [Open-Meteo](https://open-meteo.com/) (CC-BY 4.0), which aggregates
 ECMWF, NOAA, DWD, Météo-France, the UK Met Office and fourteen more national
-services; [MET Norway](https://api.met.no/) as fallback; alerts from
+services; in Canada, ECCC's GEM and ECMWF's IFS through Open-Meteo as well;
+[MET Norway](https://api.met.no/) as fallback; alerts from
 [ECCC](https://api.weather.gc.ca/) ([ECCC Data Server End-use Licence](https://eccc-msc.github.io/open-data/licence/readme_en/)) and
 the [US National Weather Service](https://api.weather.gov/) (public domain);
 place names from [GeoNames](https://www.geonames.org/) (CC-BY 4.0).
@@ -237,7 +242,7 @@ place names from [GeoNames](https://www.geonames.org/) (CC-BY 4.0).
 Every source is credited at runtime under **Data sources**, in Preferences on
 the desktop and on the Me tab on a phone, generated from the provider registry
 rather than maintained by hand. The full record is in
-[`docs/02-data-sources.md`](docs/02-data-sources.md) §2.9.
+[`docs/02-data-sources.md`](docs/02-data-sources.md) §2.9 and §2.10.
 
 ## Licence
 

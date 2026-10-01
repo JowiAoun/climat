@@ -195,6 +195,55 @@ here:
 The alerts credit in `EcccAlertProvider::attribution()`, `REUSE.toml`,
 `packaging/linux/copyright` and `LICENSES/` now name this licence.
 
+**In Canada, Open-Meteo's best match is the American model.** For every
+southern Canadian city tried, from Vancouver to Halifax, `best_match` is
+NOAA's GFS with HRRR, hour for hour. ECCC's own GEM is one `models=` value
+away, so it was measured before anything was switched:
+`scripts/forecast-backtest.py` scores the forecasts each model actually issued,
+from Open-Meteo's previous-runs API, against ECCC's hourly and daily climate
+records at 14 airports, Vancouver to St. John's and Iqaluit. June to September
+2026, every hour pooled:
+
+| Average error | best match | GEM | ECMWF IFS | average of best match, GEM and IFS |
+|---|---|---|---|---|
+| Temperature, 1 day ahead | 1.39 °C | 1.38 | 1.33 | **1.14** |
+| Temperature, 3 days | 1.82 °C | 1.82 | 1.59 | **1.47** |
+| Temperature, 5 days | 2.23 °C | 2.12 | 1.97 | **1.80** |
+| Wind, 1 day ahead | 4.58 km/h | 4.38 | 4.76 | **4.17** |
+| Wind, 3 days | 5.04 km/h | 5.42 | 5.18 | **4.68** |
+| Wind, 5 days | 5.88 km/h | 6.09 | 5.87 | **5.29** |
+| Rain day called right, 1 day | 82.9 % | 84.8 | 81.4 | 83.6 |
+| Rain day called right, 3 days | 79.3 % | 78.7 | 77.9 | 76.5 |
+| Rain day called right, 5 days | 72.9 % | 74.0 | 70.3 | 70.7 |
+
+GEM alone is no better than best match. The average of the three is better on
+temperature and wind at every range, and at 13 or 14 of the 14 stations on
+every row. At the shortest range, the latest run, it ties best match. It is
+worse at calling wet and dry days three and five days out, because an average
+spreads one model's shower across all three.
+
+So Climat averages the three in Canada for temperature, feels-like, dew point,
+humidity, wind and gusts, and takes the daily highs, lows and wind maxima from
+the averaged hours. Rain, snow, the weather code, cloud, the chance of rain,
+pressure, UV and visibility stay best match's. The two extra models come from
+a second, smaller request (six variables, two models), so the first request
+and its cache key are unchanged and a failure of the second costs only the
+average. `libclimat/providers/openmeteo/openmeteoconsensus.h` holds the
+detail.
+
+Both licences allow it. Open-Meteo's free tier covers "non-profit websites or
+apps that do not have subscriptions or advertising", under 10,000 calls a day,
+5,000 an hour and 600 a minute; its CC BY 4.0 asks that a change be said,
+which the Open-Meteo credit now does. GEM is under the ECCC licence above, and
+an average is information from several sources, so its credit is the
+licence's sentence for that case. ECMWF's open data is CC BY 4.0 under ECMWF's
+terms of use, which ask for a copyright line with the year, the source, the
+licence, its disclaimer and a word on modification; its credit carries all of
+them. Both appear under Data sources.
+
+The measurement covers summer and early autumn. Run the script again in
+winter, when snow, inversions and Arctic air are what a forecast gets wrong.
+
 ## Sources
 
 - [Open-Meteo docs](https://open-meteo.com/en/docs) · [Air Quality API](https://open-meteo.com/en/docs/air-quality-api) · [Geocoding API](https://open-meteo.com/en/docs/geocoding-api) · [ECMWF API](https://open-meteo.com/en/docs/ecmwf-api) · [Ensemble API](https://open-meteo.com/en/docs/ensemble-api) · [Terms](https://open-meteo.com/en/terms) · [Pricing](https://open-meteo.com/en/pricing) · [open-meteo/open-meteo](https://github.com/open-meteo/open-meteo) · [Self-host getting started](https://github.com/open-meteo/open-meteo/blob/main/docs/getting-started.md)

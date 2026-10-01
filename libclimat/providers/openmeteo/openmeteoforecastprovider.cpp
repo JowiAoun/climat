@@ -8,6 +8,7 @@
 #include "libclimat/net/httpclient.h"
 #include "libclimat/net/requestkey.h"
 #include "libclimat/providers/openmeteo/openmeteoadapter.h"
+#include "libclimat/providers/openmeteo/openmeteoconsensus.h"
 #include "libclimat/providers/openmeteo/openmeteovariables.h"
 
 #include <QFutureWatcher>
@@ -149,6 +150,22 @@ HttpRequest OpenMeteoForecastProvider::buildRequest(const ForecastRequest &reque
     return out;
 }
 
+HttpRequest OpenMeteoForecastProvider::buildConsensusRequest(const ForecastRequest &request) const
+{
+    // The same coordinate, zone and window as buildRequest(), so that every
+    // hour in one answer has its twin in the other. Only hours: a `current=`
+    // block with two models comes back once, for one of them.
+    HttpRequest out = buildRequest(request);
+    out.parameters = {
+        { QStringLiteral("timezone"), QStringLiteral("auto") },
+        { QStringLiteral("forecast_days"), QString::number(clampDays(request.days)) },
+        { QStringLiteral("past_days"), QString::number(kPastDays) },
+        { QStringLiteral("hourly"), openmeteo::consensusHourlyParameter() },
+        { QStringLiteral("models"), openmeteo::consensusModels().join(QLatin1Char(',')) },
+    };
+    return out;
+}
+
 Capabilities OpenMeteoForecastProvider::capabilitiesAt(Coordinate coord) const
 {
     const auto learned = m_learned.constFind(coord.rounded().toKeyString());
@@ -202,8 +219,7 @@ QFuture<Result<Forecast>> OpenMeteoForecastProvider::fetchForecast(const Forecas
             // than "updated just now" every time the app is reopened.
             adapted.value().fetchedAt = cached.fetchedAt;
             rememberCapabilities(coord, adapted.value());
-            promise->addResult(adapted);
-            promise->finish();
+            deliver(promise, request, adapted, !request.cachedOnly);
             return future;
         }
         // A cached payload that no longer parses is a cached payload we should
@@ -230,7 +246,7 @@ QFuture<Result<Forecast>> OpenMeteoForecastProvider::fetchForecast(const Forecas
     auto *watcher = new QFutureWatcher<Result<HttpResponse>>(this);
 
     connect(watcher, &QFutureWatcherBase::finished, this,
-            [this, watcher, promise, coord, key, cached]() {
+            [this, watcher, promise, request, coord, key, cached]() {
                 watcher->deleteLater();
 
                 const Result<HttpResponse> transferred = watcher->result();
@@ -250,8 +266,7 @@ QFuture<Result<Forecast>> OpenMeteoForecastProvider::fetchForecast(const Forecas
                         if (stale) {
                             stale.value().fetchedAt = cached.fetchedAt;
                             rememberCapabilities(coord, stale.value());
-                            promise->addResult(stale);
-                            promise->finish();
+                            deliver(promise, request, stale, false);
                             return;
                         }
                     }
@@ -279,8 +294,7 @@ QFuture<Result<Forecast>> OpenMeteoForecastProvider::fetchForecast(const Forecas
                             // a 200 carrying the same body.
                             confirmed.value().fetchedAt = response.fetchedAt;
                             rememberCapabilities(coord, confirmed.value());
-                            promise->addResult(confirmed);
-                            promise->finish();
+                            deliver(promise, request, confirmed, true);
                             return;
                         }
                     }
@@ -307,6 +321,8 @@ QFuture<Result<Forecast>> OpenMeteoForecastProvider::fetchForecast(const Forecas
                     payloadcache::store(m_cache, key, providerId(),
                                         QStringLiteral("forecast"), DataKind::Forecast,
                                         coord, response);
+                    deliver(promise, request, adapted, true);
+                    return;
                 }
 
                 promise->addResult(adapted);
@@ -315,6 +331,84 @@ QFuture<Result<Forecast>> OpenMeteoForecastProvider::fetchForecast(const Forecas
 
     watcher->setFuture(transfer);
     return future;
+}
+
+// ---- the Canadian average ----------------------------------------------------
+//
+// openmeteo/openmeteoconsensus.h has the measurement this rests on. What is
+// here is the plumbing, and its rule is that the average can only ever add:
+// every way the second request fails ends in the forecast the first request
+// produced, unaveraged, which is the forecast this app showed before.
+
+Result<Forecast> OpenMeteoForecastProvider::averaged(Result<Forecast> result,
+                                                     const QByteArray &payload) const
+{
+    const Result<QList<Forecast>> models = openmeteo::adaptConsensus(payload, providerId());
+    if (models && result)
+        openmeteo::applyConsensus(result.value(), models.value());
+    return result;
+}
+
+void OpenMeteoForecastProvider::deliver(const Promise &promise, const ForecastRequest &request,
+                                        Result<Forecast> result, bool networkAllowed)
+{
+    const auto finish = [promise](const Result<Forecast> &answer) {
+        promise->addResult(answer);
+        promise->finish();
+    };
+
+    // An explicit model list is a caller asking for those models and no
+    // others, and an error has nothing to average into.
+    if (!result || !request.models.isEmpty() || !openmeteo::consensusApplies(request.coord)) {
+        finish(result);
+        return;
+    }
+
+    const HttpRequest       http   = buildConsensusRequest(request);
+    const QString           key    = RequestKey::forRequest(http).toString();
+    const payloadcache::Hit cached = payloadcache::lookUp(m_cache, key);
+
+    if (cached.present && (cached.fresh || !networkAllowed)) {
+        finish(averaged(result, cached.payload));
+        return;
+    }
+    if (!networkAllowed) {
+        finish(result);
+        return;
+    }
+
+    auto *watcher = new QFutureWatcher<Result<HttpResponse>>(this);
+    connect(watcher, &QFutureWatcherBase::finished, this,
+            [this, watcher, finish, result, request, key, cached]() {
+                watcher->deleteLater();
+
+                const Result<HttpResponse> transferred = watcher->result();
+                if (!transferred) {
+                    finish(cached.present ? averaged(result, cached.payload) : result);
+                    return;
+                }
+
+                const HttpResponse &response = transferred.value();
+                if (response.notModified) {
+                    if (cached.present) {
+                        payloadcache::touch(m_cache, key, DataKind::Forecast, response);
+                        finish(averaged(result, cached.payload));
+                    } else {
+                        finish(result);
+                    }
+                    return;
+                }
+
+                // Kept only if it parses, so a bad answer is not served from
+                // the cache for the next thirty minutes as well.
+                if (openmeteo::adaptConsensus(response.body, providerId())) {
+                    payloadcache::store(m_cache, key, providerId(),
+                                        QStringLiteral("forecast"), DataKind::Forecast,
+                                        request.coord, response);
+                }
+                finish(averaged(result, response.body));
+            });
+    watcher->setFuture(m_http->send(http));
 }
 
 } // namespace climat

@@ -225,10 +225,13 @@ Attribution attribution()
                         QStringLiteral("JMA"),     QStringLiteral("KMA"),
                         QStringLiteral("BOM"),     QStringLiteral("CMA") };
 
+    // The last sentence is CC BY 4.0's "indicate if changes were made". See
+    // openmeteo/openmeteoconsensus.h for the change and why.
     credit.note = QStringLiteral(
         "Free for non-commercial use with no API key. Model output is stitched "
         "across runs by Open-Meteo; the owners above are credited for the "
-        "underlying forecasts.");
+        "underlying forecasts. In Canada, Climat averages this forecast with ECCC's GEM "
+        "and ECMWF's IFS for temperature, humidity and wind.");
 
     return credit;
 }

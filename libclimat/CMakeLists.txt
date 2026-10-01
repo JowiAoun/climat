@@ -100,6 +100,8 @@ add_library(libclimat STATIC
     providers/fixture/fixtureprovider.cpp
     providers/openmeteo/openmeteoadapter.h
     providers/openmeteo/openmeteoadapter.cpp
+    providers/openmeteo/openmeteoconsensus.h
+    providers/openmeteo/openmeteoconsensus.cpp
     providers/openmeteo/openmeteoforecastprovider.h
     providers/openmeteo/openmeteoforecastprovider.cpp
     providers/openmeteo/openmeteovariables.h

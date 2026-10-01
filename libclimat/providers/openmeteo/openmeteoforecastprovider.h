@@ -63,7 +63,10 @@
 
 #include <QHash>
 #include <QObject>
+#include <QPromise>
 #include <QString>
+
+#include <memory>
 
 namespace climat {
 
@@ -114,11 +117,35 @@ public:
     // are is a question with an answer that needs no network.
     [[nodiscard]] HttpRequest buildRequest(const ForecastRequest &request) const;
 
+    // The second, smaller request a Canadian forecast gets: two more models'
+    // hours, for the average in openmeteo/openmeteoconsensus.h. Its own
+    // request so the first stays byte for byte what it was, cache key and
+    // recorded fixtures included, and so a failure here costs the average and
+    // nothing else. Public for buildRequest's reason.
+    [[nodiscard]] HttpRequest buildConsensusRequest(const ForecastRequest &request) const;
+
     // How many days this provider will actually ask for, given a request.
     static int clampDays(int requested);
 
 private:
+    using Promise = std::shared_ptr<QPromise<Result<Forecast>>>;
+
     void rememberCapabilities(Coordinate coord, const Forecast &forecast);
+
+    // Every answer fetchForecast() gives leaves through here. Where the average
+    // applies, it fetches or reads the consensus request and folds it in
+    // first. `networkAllowed` is false for a cached-only read, which has to
+    // finish before fetchForecast() returns (daemon/snapshotservice.cpp warms
+    // a tile on that), and after the main request has just failed, when a
+    // second attempt would only make the stale answer wait for its own
+    // timeout.
+    void deliver(const Promise &promise, const ForecastRequest &request,
+                 Result<Forecast> result, bool networkAllowed);
+
+    // `result` with the models in `payload` averaged in, or `result` as it
+    // was if `payload` does not parse.
+    [[nodiscard]] Result<Forecast> averaged(Result<Forecast> result,
+                                            const QByteArray &payload) const;
 
     HttpClient *m_http  = nullptr;
     Clock      *m_clock = nullptr;
