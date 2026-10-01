@@ -267,9 +267,10 @@ SPDX-License-Identifier = "CC-BY-4.0"
 # above. Getting this wrong would attach a Creative Commons licence to a work of
 # the United States government and a public-domain notice to Crown data.
 #
-#   api.weather.gc.ca   Environment and Climate Change Canada, under the Open
-#                       Government Licence - Canada 2.0. The credit line that
-#                       licence asks for is returned by
+#   api.weather.gc.ca   Environment and Climate Change Canada, under ECCC's Data
+#                       Server End-use Licence, which covers everything MSC
+#                       serves through GeoMet and the Datamart. The credit line
+#                       that licence asks for is returned by
 #                       EcccAlertProvider::attribution() word for word.
 #
 #   api.weather.gov     A work of the United States federal government, which is
@@ -292,7 +293,7 @@ path = [
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "Environment and Climate Change Canada"
-SPDX-License-Identifier = "LicenseRef-OGL-Canada-2.0"
+SPDX-License-Identifier = "LicenseRef-ECCC-Data-Server-End-Use"
 
 [[annotations]]
 path = [
@@ -346,7 +347,7 @@ SPDX-FileCopyrightText = [
     "NOAA National Weather Service",
     "Environment and Climate Change Canada",
 ]
-SPDX-License-Identifier = "GPL-3.0-or-later AND CC-BY-4.0 AND LicenseRef-US-Public-Domain AND LicenseRef-OGL-Canada-2.0"
+SPDX-License-Identifier = "GPL-3.0-or-later AND CC-BY-4.0 AND LicenseRef-US-Public-Domain AND LicenseRef-ECCC-Data-Server-End-Use"
 
 # The manifests beside them are ours: a place, a description and the instant the
 # FrozenClock is set to. Not Open-Meteo's data, and JSON has nowhere to put a

@@ -64,11 +64,11 @@ Comment:
 
 Files: libclimat/providers/fixture/data/toronto/alerts.json
 Copyright: Environment and Climate Change Canada
-License: LicenseRef-OGL-Canada-2.0
+License: LicenseRef-ECCC-Data-Server-End-Use
 Comment:
- Recorded from api.weather.gc.ca under the Open Government Licence - Canada
- 2.0. The attribution that licence requires is returned verbatim by
- EcccAlertProvider::attribution().
+ Recorded from api.weather.gc.ca under the Environment and Climate Change
+ Canada Data Server End-use Licence. The attribution that licence requires is
+ returned verbatim by EcccAlertProvider::attribution().
 
 Files: libclimat/providers/fixture/data/seattle/alerts.json
 Copyright: NOAA National Weather Service
@@ -108,9 +108,10 @@ License: OFL-1.1
  SIL Open Font License, Version 1.1.
  The complete text is at https://openfontlicense.org/
 
-License: LicenseRef-OGL-Canada-2.0
- Open Government Licence - Canada, version 2.0.
- The complete text is at https://open.canada.ca/en/open-government-licence-canada
+License: LicenseRef-ECCC-Data-Server-End-Use
+ Environment and Climate Change Canada Data Services End-use Licence,
+ version 2.1.1.
+ The complete text is at https://eccc-msc.github.io/open-data/licence/readme_en/
 
 License: LicenseRef-US-Public-Domain
  A work of the United States federal government, not subject to copyright

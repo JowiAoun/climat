@@ -230,7 +230,7 @@ to a public weather service, and nothing goes anywhere else.
 Weather from [Open-Meteo](https://open-meteo.com/) (CC-BY 4.0), which aggregates
 ECMWF, NOAA, DWD, Météo-France, the UK Met Office and fourteen more national
 services; [MET Norway](https://api.met.no/) as fallback; alerts from
-[ECCC](https://api.weather.gc.ca/) (Open Government Licence - Canada 2.0) and
+[ECCC](https://api.weather.gc.ca/) ([ECCC Data Server End-use Licence](https://eccc-msc.github.io/open-data/licence/readme_en/)) and
 the [US National Weather Service](https://api.weather.gov/) (public domain);
 place names from [GeoNames](https://www.geonames.org/) (CC-BY 4.0).
 

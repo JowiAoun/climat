@@ -149,20 +149,21 @@ QString EcccAlertProvider::displayName() const
 
 Attribution EcccAlertProvider::attribution() const
 {
-    // docs/02-data-sources.md §2.9 records ECCC's requirement as one exact
-    // sentence, which is why Attribution has a `creditLine` field separate from
-    // `name` - see iforecastprovider.h. It is transcribed, not paraphrased.
+    // docs/02-data-sources.md §2.10. GeoMet is covered by ECCC's Data Server
+    // End-use Licence, which asks for the originator by name and, where
+    // possible, a link to the licence. The alerts are shown as issued and come
+    // from one originator, so the line is the licence's own example rather
+    // than its fallback for mixed sources. It is transcribed, not paraphrased.
     Attribution credit;
-    credit.name       = QStringLiteral("Environment and Climate Change Canada");
-    credit.creditLine = QStringLiteral(
-        "Data provided by Environment and Climate Change Canada. "
-        "Contains information licensed under the Open Government Licence - Canada.");
+    credit.name        = QStringLiteral("Environment and Climate Change Canada");
+    credit.creditLine  = QStringLiteral("Data Source: Environment and Climate Change Canada");
     credit.homepage    = QUrl(QStringLiteral("https://weather.gc.ca/"));
-    credit.licenceName = QStringLiteral("Open Government Licence - Canada 2.0");
+    credit.licenceName = QStringLiteral("ECCC Data Server End-use Licence");
     credit.licenceUrl =
-        QUrl(QStringLiteral("https://open.canada.ca/en/open-government-licence-canada"));
+        QUrl(QStringLiteral("https://eccc-msc.github.io/open-data/licence/readme_en/"));
     credit.note = QStringLiteral(
-        "Public weather alerts via the GeoMet-Weather OGC API. Alerts are issued for Canadian "
+        "Public weather alerts via the GeoMet-Weather OGC API, shown as issued: the licence "
+        "allows no change to an alert's content or intent. Alerts are issued for Canadian "
         "territory only; the authoritative presentation is weather.gc.ca.");
     return credit;
 }

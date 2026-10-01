@@ -344,14 +344,12 @@ Attribution FixtureAlertProvider::attribution() const
         original.licenceName = QStringLiteral("U.S. Public Domain (17 U.S.C. §105)");
         original.licenceUrl  = QUrl(QStringLiteral("https://www.weather.gov/disclaimer"));
     } else {
-        original.name       = QStringLiteral("Environment and Climate Change Canada");
-        original.creditLine = QStringLiteral(
-            "Data provided by Environment and Climate Change Canada. "
-            "Contains information licensed under the Open Government Licence - Canada.");
+        original.name        = QStringLiteral("Environment and Climate Change Canada");
+        original.creditLine  = QStringLiteral("Data Source: Environment and Climate Change Canada");
         original.homepage    = QUrl(QStringLiteral("https://weather.gc.ca/"));
-        original.licenceName = QStringLiteral("Open Government Licence - Canada 2.0");
+        original.licenceName = QStringLiteral("ECCC Data Server End-use Licence");
         original.licenceUrl  = QUrl(
-            QStringLiteral("https://open.canada.ca/en/open-government-licence-canada"));
+            QStringLiteral("https://eccc-msc.github.io/open-data/licence/readme_en/"));
     }
     return recordedCredit(original, m_fixture);
 }

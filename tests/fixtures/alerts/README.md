@@ -10,8 +10,8 @@ executable rather than remembered, and it is **not** run by the build or by CI.
 Nothing in `tests/` may reach a network - `docs/04-architecture.md` §4.11, enforced at run time by
 `tests/support/networkguard.h` and statically by `tests/tst_sourcerules.cpp`.
 
-Licensing is in `REUSE.toml`, and the two services differ: Canada's is the Open Government Licence
-- Canada 2.0, and the United States' is a government work with no copyright at all under
+Licensing is in `REUSE.toml`, and the two services differ: Canada's is ECCC's Data Server End-use
+Licence, and the United States' is a government work with no copyright at all under
 17 U.S.C. §105. Neither is Creative Commons, which is why they are annotated separately from every
 other fixture in this repository.
 

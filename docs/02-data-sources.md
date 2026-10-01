@@ -28,7 +28,7 @@ Headline conclusions:
 | **MET Norway Locationforecast 2.0** | Global | ❌ | 20 req/s; **mandatory identifying User-Agent** or 403 | CC-BY 4.0 | MET Nordic / ECMWF blend | Norway only | ✅ **Fallback** |
 | **NWS api.weather.gov** | US + territories | ❌ | Polite use; UA with contact requested | US public domain | NDFD / NBM | ✅ **CAP** | ✅ US alerts + obs |
 | **Bright Sky** (DWD wrapper) | Germany + DWD domain | ❌ | Free | MIT code / DWD data (GeoNutzV) | ICON-D2/EU | DWD warnings | ⭕ Optional DE |
-| **ECCC GeoMet / MSC** | Canada | ❌ | Free | Open Government Licence - Canada | GDPS/RDPS/HRDPS | ✅ | ⭕ CA alerts + radar |
+| **ECCC GeoMet / MSC** | Canada | ❌ | Free | ECCC Data Server End-use Licence (see §2.10) | GDPS/RDPS/HRDPS | ✅ | ⭕ CA alerts + radar |
 | OpenWeatherMap | Global | ✅ | 1 000/day free, then paid | Proprietary | Own blend | Paid tier | ❌ key friction |
 | WeatherAPI.com | Global | ✅ | 1M/mo free | Proprietary | Own blend | ✅ | ❌ key friction |
 | Tomorrow.io | Global | ✅ | 500/day free | Proprietary | Own | ✅ | ❌ key friction |
@@ -85,7 +85,7 @@ says 4 mm and AIFS says 0.2 mm, and that is information the user genuinely wants
 | **RainViewer** | 1 200+ radars, 150+ countries, 5-min refresh, 2 h past + nowcast | **Free tier: "personal or educational use only"**, attribution link required; no availability guarantee | XYZ raster tiles + `weather-maps.json` timeline | ❌ **No** - licence forbids it for a distributed app. Offer as opt-in only. |
 | **LibreWXR** | US (IEM), Canada (ECCC), pan-European (EUMETNET OPERA), global ECMWF; plus global alerts | **CC-BY 4.0**, free with attribution; self-hostable drop-in RainViewer replacement | RainViewer-compatible | ✅ **Best default candidate** |
 | **Iowa Environmental Mesonet (IEM)** | US NEXRAD mosaic, 5-min, 1995→now | Academic public service; attribute Iowa State; be polite | **WMS + WMS-T** (`n0r`, `n0r-t`, `daa`, `dta`) | ✅ US |
-| **ECCC GeoMet** | Canada, 1 km | Open Government Licence - Canada | WMS (`RADAR_1KM_RSNO`, …) | ✅ Canada |
+| **ECCC GeoMet** | Canada, 1 km | ECCC Data Server End-use Licence (see §2.10) | WMS (`RADAR_1KM_RSNO`, …) | ✅ Canada |
 | **DWD Open Data** | Germany (RADOLAN/RADVOR) | GeoNutzV, attribution | Binary grids / GeoTIFF | ✅ Germany (needs decoding work) |
 | **EUMETNET OPERA** | Pan-European composite | Via LibreWXR / national portals | - | ✅ Europe (indirect) |
 | **NOAA MRMS** | CONUS, 2-min, quantitative | US public domain | GRIB2 | ⭕ heavy; server-side only |
@@ -105,7 +105,7 @@ region-routed chain over CAP (Common Alerting Protocol):
 |---|---|---|---|
 | USA | NWS `api.weather.gov/alerts` (+ `weather.gov/alerts`) | Free, no key, CAP XML + JSON, ATOM digest | US public domain |
 | Europe + UK + Israel | **MeteoAlarm** (EUMETNET) | Atom/CAP feeds per country and all-Europe; REST API portal at `api.meteoalarm.org` is aimed at member services - **confirm terms for third-party clients** ⚠️ | Per-country |
-| Canada | ECCC / MSC | CAP via MSC Open Data / GeoMet | OGL-Canada |
+| Canada | ECCC / MSC | CAP via MSC Open Data / GeoMet | ECCC Data Server End-use Licence (see §2.10) |
 | Norway | MET Alerts (api.met.no) | Free, UA required | CC-BY 4.0 |
 | Global fallback | WMO Severe Weather Information Centre (severeweather.wmo.int) CAP source list | Aggregated national CAP endpoints | Per-issuer |
 | Commercial fallback | Xweather alerts (NWS + EC + MeteoAlarm + UKMO + JMA + BOM + CMA in one API) | Paid | Proprietary |
@@ -162,7 +162,7 @@ Open-Meteo is documented and realistic:
 | Open-Meteo (forecast, AQI, archive, geocoding, elevation) | "Weather data by Open-Meteo.com" + link to CC-BY 4.0; underlying model owners (ECMWF, NOAA, DWD, Météo-France, …) named |
 | MET Norway | CC-BY 4.0 credit + **identifying User-Agent** `Climat/<version> (+https://…; contact@…)` - generic UA gets 403/blocked |
 | NWS / NOAA | Public domain; UA with contact still expected |
-| ECCC | "Contains information licensed under the Open Government Licence - Canada" |
+| ECCC | "Data Source: Environment and Climate Change Canada" for the alerts, shown as issued; "Contains information licenced under the Data Server End-use Licence of Environment and Climate Change Canada" for GEM averaged with other models. ⚠️ **Correction:** this said the Open Government Licence - Canada. See §2.10. |
 | DWD | GeoNutzV attribution |
 | IEM | Credit Iowa State University / Iowa Environmental Mesonet |
 | LibreWXR | CC-BY 4.0 credit |
@@ -172,6 +172,28 @@ Open-Meteo is documented and realistic:
 | Qt | LGPLv3 notice + licence text + relink information (see [`03-tech-stack.md`](03-tech-stack.md)) |
 
 Build this screen in **M1**, not at the end. It is a licence obligation, not polish.
+
+## 2.10 Corrections, checked 2026-09-30
+
+**ECCC's data is not under the Open Government Licence.** Everything MSC serves
+through GeoMet and the Datamart, `api.weather.gc.ca` included, is under the
+[Environment and Climate Change Canada Data Services End-use Licence](https://eccc-msc.github.io/open-data/licence/readme_en/),
+version 2.1.1 as of August 2026. It is close to the Open Government Licence and
+allows the same uses, commercial or not, with three differences that matter
+here:
+
+- The credit names the originator: "Data Source: Environment and Climate Change
+  Canada". Data from several originators, or several providers where separate
+  credits are not practical, takes "Contains information licenced under the
+  Data Server End-use Licence of Environment and Climate Change Canada".
+  Either way, link to the licence where possible.
+- A weather alert must be reproduced with no change to its content or intent.
+  Climat shows ECCC's text as issued.
+- Nothing may suggest ECCC endorses the app, and its names, crests and logos
+  are not licensed. Climat uses none of them.
+
+The alerts credit in `EcccAlertProvider::attribution()`, `REUSE.toml`,
+`packaging/linux/copyright` and `LICENSES/` now name this licence.
 
 ## Sources
 
