@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.2.0](https://github.com/JowiAoun/climat/compare/v0.1.0...v0.2.0) (2026-10-01)
+
+
+### Features
+
+* **libclimat:** average three models for a Canadian forecast ([6a4239b](https://github.com/JowiAoun/climat/commit/6a4239b9df868839e8820f35d9aab62fc7beb82e))
+
+
+### Fixes
+
+* **alerts:** credit ECCC under the licence its data servers use ([c3ad622](https://github.com/JowiAoun/climat/commit/c3ad622bddf09f0a6b9f09fd51d2dfe7a5d6f684))
+* **ci:** name the appimage with the version like every other artefact ([f278988](https://github.com/JowiAoun/climat/commit/f27898855fcb9df7ef8d4d333bdec95bf0128c47))
+
+
+### Documentation
+
+* record that 0.1.0 is out and point at it ([9493688](https://github.com/JowiAoun/climat/commit/94936881e46f33f9e5f8e283b6aee9d419463d8d))
+
 ## 0.1.0 (2026-09-30)
 
 
