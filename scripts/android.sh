@@ -80,6 +80,15 @@ need() {
   fi
 }
 
+# The devshell points every Qt-finding variable at the Nix store's desktop Qt,
+# which is right for every other build in this tree and wrong for this one:
+# find_package(Qt6) would take the store's qtbase over the Android kit and fail
+# on the first Android-only macro. Every CMake run here drops them, so the
+# Android kit is the only Qt in sight.
+android_env=(env -u QT_ADDITIONAL_PACKAGES_PREFIX_PATH -u CMAKE_PREFIX_PATH
+             -u CMAKE_INCLUDE_PATH -u CMAKE_LIBRARY_PATH
+             -u QT_PLUGIN_PATH -u QML_IMPORT_PATH -u QML2_IMPORT_PATH)
+
 command="${1:-apk}"
 shift || true
 
@@ -158,17 +167,8 @@ case "$command" in
 
     # Release, tests off, dev tools off: the phone runs the product, and the
     # gallery and the probes are desktop programs that import Qt Test.
-    #
-    # The devshell points every Qt-finding variable at the Nix store's desktop
-    # Qt, which is right for every other build in this tree and wrong for this
-    # one: find_package(Qt6) would take the store's qtbase over the Android
-    # kit and fail on the first Android-only macro. Those variables are
-    # dropped for this configure only, so the Android kit is the only Qt in
-    # sight.
     PATH="$sdk/cmake/$cmake_version/bin:$PATH" \
-    env -u QT_ADDITIONAL_PACKAGES_PREFIX_PATH -u CMAKE_PREFIX_PATH \
-        -u CMAKE_INCLUDE_PATH -u CMAKE_LIBRARY_PATH \
-        -u QT_PLUGIN_PATH -u QML_IMPORT_PATH -u QML2_IMPORT_PATH \
+    "${android_env[@]}" \
     "$qt_android/bin/qt-cmake" -S "$root" -B "$build_dir" -G Ninja \
       -DCMAKE_BUILD_TYPE=Release \
       -DQT_HOST_PATH="$qt_host" \
@@ -183,6 +183,11 @@ case "$command" in
 
   apk|aab)
     [ -f "$build_dir/build.ninja" ] || "$0" configure
+    # The same clean environment as `configure`: a change to any CMakeLists.txt
+    # makes ninja run CMake again from inside this build, and with the
+    # devshell's variables still set that run finds the Nix store's QtDBus and
+    # the build fails on a desktop header.
+    "${android_env[@]}" \
     "$sdk/cmake/$cmake_version/bin/cmake" --build "$build_dir" --target "$command" -j "$jobs"
     echo
     find "$build_dir/app/android-build" -name '*.apk' -o -name '*.aab' | sort
