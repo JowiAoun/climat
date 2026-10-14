@@ -537,8 +537,9 @@ endif()
 # reason.
 #
 # First configured and built on 2026-09-17 against Qt 6.11.1, NDK 27.2 and
-# SDK platform 36, on a Linux host. Not yet run on a phone; docs/known-gaps.md
-# has what that leaves open.
+# SDK platform 36, on a Linux host. Run on an Android 16 emulator on a real
+# GPU on 2026-10-14, not yet on a phone; docs/known-gaps.md has what that
+# leaves open.
 if(ANDROID)
     # Google Play wants a version code that only ever goes up, and a version
     # name a person can read. Both come from project(VERSION), which
@@ -577,6 +578,14 @@ if(ANDROID)
     # weather app.
     qt_add_android_permission(climat NAME android.permission.INTERNET)
     qt_add_android_permission(climat NAME android.permission.ACCESS_COARSE_LOCATION)
+
+    # Qt Positioning's Android plugin goes into the package only when the app
+    # links the module itself. libclimat links it privately, and through that
+    # alone the package shipped the library and not the plugin, so "use my
+    # location" found no source on any phone.
+    if(TARGET Qt6::Positioning)
+        target_link_libraries(climat PRIVATE Qt6::Positioning)
+    endif()
 
     include(ClimatAndroidTls)
     climat_android_bundle_tls(climat)

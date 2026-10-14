@@ -40,11 +40,18 @@ platform 36 and build-tools 36.0.0 on a Linux host:
 - **It launches and runs.** Installed on an Android 16 emulator, the package
   loads every Qt library and `libclimat`, starts the Qt platform plugin and
   runs `main()` into a live event loop with a window Android reports ready.
-- **It renders.** The mobile shell draws correctly through the OpenGL RHI
-  backend on a real GPU. The headless swiftshader emulator never exposes Qt's
-  surface, so a pixel from the emulator itself is blank - an emulator
-  limitation, not the app - and the remaining visual check is one screen of a
-  physical phone or a GPU-backed emulator.
+- **It renders, and it works.** On 2026-10-14 an Android 16 emulator on the
+  host's GPU (`-gpu host`) showed every tab, a live Open-Meteo forecast over
+  the bundled OpenSSL, the place search, and "Use my location" from Android's
+  permission prompt to a forecast for the city it found. The headless
+  swiftshader emulator used before never exposes Qt's surface, which is why
+  the earlier captures were blank.
+- **That run found three faults, now fixed.** The top of every page sat under
+  the status bar, because Android 15 and later draw an app edge to edge;
+  `app/platform/windowinsets.h` now reads the system bars. A first launch was
+  an empty screen with nothing to tap; it now says "Choose a place". And "Use
+  my location" could never work: the package carried Qt Positioning without
+  its Android plugin, and nothing asked Android for the permission.
 - **The CI job runs on every push**, not on `workflow_dispatch` alone, and
   prints what the package declares so a permission a Qt module adds is read in
   review rather than discovered by Play.
@@ -109,8 +116,8 @@ that says warnings appear only while the app is open, and
 
 What is left is the feature itself: the `WorkManager` job and the notification
 channel of steps 1 and 2 above, and then the product decision in steps 3 to 5.
-And one screen of a real phone, to turn "renders under OpenGL" into "renders on
-a device".
+And one session on a real phone, which the 14-day closed test Play asks of a
+new account gives anyway.
 
 ---
 

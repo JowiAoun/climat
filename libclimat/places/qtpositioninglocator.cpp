@@ -3,9 +3,15 @@
 
 #include "qtpositioninglocator.h"
 
+#include <QCoreApplication>
 #include <QGeoCoordinate>
 #include <QGeoPositionInfo>
 #include <QGeoPositionInfoSource>
+#include <QtGlobal>
+
+#if defined(Q_OS_ANDROID) && QT_CONFIG(permissions)
+#include <QPermissions>
+#endif
 
 namespace climat {
 
@@ -53,6 +59,27 @@ void QtPositioningLocator::requestPosition()
     // trip would make the wait longer.
     if (isRequestInFlight())
         return;
+
+#if defined(Q_OS_ANDROID) && QT_CONFIG(permissions)
+    // Android asks the reader first, and Qt Positioning leaves the asking to
+    // the app: without it every request ends in an access error. Approximate
+    // and while in use, which is the coarse permission the manifest declares.
+    QLocationPermission permission;
+    permission.setAccuracy(QLocationPermission::Approximate);
+    permission.setAvailability(QLocationPermission::WhenInUse);
+    if (qApp->checkPermission(permission) != Qt::PermissionStatus::Granted) {
+        setRequestInFlight(true);
+        qApp->requestPermission(permission, this, [this](const QPermission &answer) {
+            setRequestInFlight(false);
+            if (answer.status() == Qt::PermissionStatus::Granted)
+                requestPosition();
+            else
+                reportFailure(Failure::PermissionDenied,
+                              QStringLiteral("location access was not granted"));
+        });
+        return;
+    }
+#endif
 
     setRequestInFlight(true);
     m_source->requestUpdate(timeout());
