@@ -1,0 +1,11 @@
+Climat is a weather app with nothing in it but the weather.
+
+Two weeks of forecast as charts rather than a grid of numbers: temperature, feels like, rain and snow, wind, humidity, pressure, visibility, UV and air quality, hour by hour and day by day. Sunrise, sunset and the moon on their own cards. Severe weather warnings from Environment and Climate Change Canada and the United States National Weather Service, shown on the screen where they matter.
+
+No ads. No news feed. No account. No tracking. Climat asks two weather services for the forecast and nothing else, and it says which ones on its own settings screen.
+
+It works offline: the last forecast stays on screen until a new one arrives, so a service being down is never an empty page.
+
+One thing it does not do yet: check for warnings while it is closed. A warning reaches you when you open the app, and the settings screen says so.
+
+Climat is free software under the GNU GPL. The source is at github.com/JowiAoun/climat, and so is the list of what is not built yet.

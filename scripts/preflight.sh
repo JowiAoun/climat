@@ -111,6 +111,7 @@ check "project URLs"        bash scripts/check-urls.sh
 check "QML module lists"    bash scripts/check-qml-files.sh
 check "translatable strings" bash scripts/i18n.sh check
 check "icons"               bash scripts/icons.sh check
+check "Play listing"        bash scripts/play.sh check
 
 if have gjs; then
   check "GNOME extension"   bash scripts/check-extension.sh

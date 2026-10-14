@@ -44,8 +44,8 @@ PNG by hand.
 - **The upload key.** Never in this repository. `docs/releasing.md` says where
   it lives and how the release workflow gets it.
 - **The Play listing.** Text, the feature graphic and the store screenshots
-  are in `play/`, beside this file, because they are uploaded by hand in the
-  Play Console and are not part of the package.
+  are in `play/`, beside this file, because they go to the Play Console and
+  not into the package. `scripts/play.sh` sends them.
 
 ## When Qt's template changes
 

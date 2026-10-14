@@ -51,6 +51,15 @@
     {
       devShells = forAllSystems (pkgs: {
         default = import ./nix/devshell.nix { inherit pkgs; };
+
+        # fastlane, for scripts/play.sh to talk to Google Play. A shell of its
+        # own because only a release needs it, and it is a Ruby world the
+        # default shell has no other use for. The JDK is for jarsigner, which
+        # checks the bundle is signed before Play is asked to take it.
+        play = pkgs.mkShell {
+          name = "climat-play";
+          packages = with pkgs; [ fastlane python3 jdk21_headless ];
+        };
       });
 
       # `nix fmt` on the Nix files. Nothing else in the tree is formatted by

@@ -92,6 +92,14 @@ precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 Jowi Aoun"
 SPDX-License-Identifier = "CC-BY-SA-4.0"
 
+# The Play listing's text, one file per field. Play shows a file's whole
+# contents, so a header in it would be on the store page.
+[[annotations]]
+path = "packaging/android/play/en-CA/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Jowi Aoun"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
 # The Debian copyright file, which is the one file here that cannot carry an
 # SPDX header for a reason other than syntax. It is a machine-readable document
 # in Debian's DEP-5 format whose whole job is to state licensing, and a

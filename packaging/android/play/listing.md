@@ -10,11 +10,17 @@ store page is reviewed like the README is. Everything under `screenshots/`
 and `feature-graphic.png` is rendered by a script and gated in CI; the words
 are edited by hand.
 
+`scripts/play.sh` sends all of it: the text in `en-CA/`, the icon, the feature
+graphic, the screenshots and the release note. The release workflow does that
+on every tag once the Play key is in the secrets, and `scripts/play.sh check`
+holds it to Play's limits on every pull request. The rest of this page is what
+is typed into the Console once.
+
 ## App details
 
 | Field | Value |
 |---|---|
-| App name | Climat |
+| App name | `en-CA/title.txt` |
 | Package name | `io.github.JowiAoun.Climat` |
 | Default language | English (Canada) |
 | Category | Weather |
@@ -22,42 +28,23 @@ are edited by hand.
 | Contains ads | No |
 | App icon | `packaging/icons/climat-512.png` |
 | Feature graphic | `feature-graphic.png` (1024 by 500) |
-| Phone screenshots | `screenshots/01-today.png` to `06-hourly-light.png` (1080 by 1920) |
-| Privacy policy | the URL of `privacy-policy.md`, published on the docs site |
-| Contact email | the address in the package's Maintainer field |
+| Phone screenshots | `screenshots/01-today.png` to `06-hourly-light.png` (540 by 960) |
+| Privacy policy | https://jowiaoun.github.io/climat/privacy-policy/ |
+| Contact email | an address that receives mail, typed into the Console |
 | Website | https://github.com/JowiAoun/climat |
+
+The contact address is shown on the store page. The package's Maintainer
+field holds a GitHub noreply address, which does not receive mail, so it is
+not the one to use here.
 
 ## Short description
 
-80 characters at most.
-
-> Forecasts as charts you can read, and official weather warnings. No ads, no account.
+`en-CA/short_description.txt`, 80 characters at most.
 
 ## Full description
 
-4000 characters at most. Plain text; Play ignores Markdown.
-
-> Climat is a weather app with nothing in it but the weather.
->
-> Two weeks of forecast as charts rather than a grid of numbers: temperature,
-> feels like, rain and snow, wind, humidity, pressure, visibility, UV and air
-> quality, hour by hour and day by day. Sunrise, sunset and the moon on their
-> own cards. Severe weather warnings from Environment and Climate Change
-> Canada and the United States National Weather Service, shown on the screen
-> where they matter.
->
-> No ads. No news feed. No account. No tracking. Climat asks two weather
-> services for the forecast and nothing else, and it says which ones on its
-> own settings screen.
->
-> It works offline: the last forecast stays on screen until a new one
-> arrives, so a service being down is never an empty page.
->
-> One thing it does not do yet: check for warnings while it is closed. A
-> warning reaches you when you open the app, and the settings screen says so.
->
-> Climat is free software under the GNU GPL. The source is at
-> github.com/JowiAoun/climat, and so is the list of what is not built yet.
+`en-CA/full_description.txt`, 4000 characters at most. Plain text: Play
+ignores Markdown and keeps every line break, so each paragraph is one line.
 
 ## Content rating
 
@@ -76,6 +63,8 @@ programme has its own review and Climat gains nothing from it.
 
 ## Release notes
 
-Written per release, in the voice of the AppStream release note in
-`packaging/linux/climat.metainfo.xml.in`, which says the same things to a
-Linux software centre. Copy it; do not paste the changelog.
+Play's "What's new" is the release's AppStream note in
+`packaging/linux/climat.metainfo.xml.in`, turned into plain text, so it says
+the same thing a Linux software centre says. A release whose note talks about
+the desktop can have a Play note of its own in
+`en-CA/changelogs/<version code>.txt`, which wins. 500 characters at most.

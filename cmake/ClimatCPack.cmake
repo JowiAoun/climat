@@ -40,8 +40,9 @@ set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 
 # Debian's Maintainer field has to parse as "Name <address>", so the issue
 # tracker that CLIMAT_CONTACT holds cannot be reused here. A GitHub noreply
-# address is a real, deliverable address that is not anybody's personal inbox,
-# which is the right default for a package that strangers will file bugs about.
+# address parses as one and is not anybody's personal inbox, which is the
+# right default for a package that strangers will file bugs about. It does not
+# receive mail, so the bug tracker is the way in.
 # A cache variable because a distribution rebuilding this is the maintainer of
 # their build, not us, and lintian will tell them so.
 set(CLIMAT_MAINTAINER "Jowi Aoun <JowiAoun@users.noreply.github.com>" CACHE STRING

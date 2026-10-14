@@ -399,6 +399,13 @@ jobs:
       - name: QML module file lists
         run: nix develop --command bash scripts/check-qml-files.sh
 
+      # The Google Play listing against Play's own limits: the text lengths,
+      # the picture sizes, and the release note that becomes "What's new".
+      # Here, so a note too long for Play fails on the release pull request
+      # where it was written, and not on the upload after the tag.
+      - name: Google Play listing
+        run: nix develop --command bash scripts/play.sh check
+
       # The GNOME Shell extension, as far as a runner can reach it: both modules
       # parse as ES modules, the D-Bus introspection XML parses and matches what
       # the extension calls, metadata.json is well formed and the GSettings
