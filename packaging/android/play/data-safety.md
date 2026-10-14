@@ -11,7 +11,7 @@ names each service the app talks to.
 
 ## Does your app collect or share any of the required user data types?
 
-**No.**
+**Yes: approximate location, and nothing else.**
 
 Nothing leaves the phone except a request to a weather service, and that
 request carries a place's coordinates and nothing about the person. There is
@@ -19,14 +19,26 @@ no account, no analytics library, no crash reporter, no advertising SDK, and
 no server of ours in the middle. The app's User-Agent names the app and a
 contact address, as MET Norway's terms require, and nothing else.
 
+Play counts any data the app sends off the phone as collected, "irrespective
+of whether data is transmitted to you or a third-party server" (Play Console
+Help, "Provide information for Google Play's Data safety section"). When a
+reader taps "Use my location", the city it finds is what the forecast request
+carries, so that is approximate location sent to a weather service. A place
+typed into the search is not the reader's location and is not declared.
+
 ## Location
 
 The app asks for approximate location (`ACCESS_COARSE_LOCATION`) only when the
 reader taps "Use my location". The fix is turned into a city name on the phone
 by a bundled place index, and the city's coordinates are what the forecast
-request carries. The fix is not stored, not sent anywhere else, and not shared.
-Under the form's definitions this is **not collection**: it is processed on
-the device and used only for the request the reader asked for.
+request carries. The fix itself is not stored and not sent anywhere.
+
+Under the form's definitions this is **collected, not shared**. It is sent
+off the phone, so it is collected. It is not shared, because the form exempts
+a transfer the reader starts and expects: they asked for the weather where
+they are. It is not processed ephemerally, because the city is saved as a
+place on the phone. It is optional, because a place typed into the search
+works without it.
 
 Precise location is not requested. Qt Positioning declares it and the manifest
 removes it; `packaging/android/AndroidManifest.xml` says how.
@@ -50,8 +62,10 @@ purpose - see `scripts/android-openssl.sh`.
 
 ## Can users request that data be deleted?
 
-There is nothing to delete on our side, because nothing is collected.
-Uninstalling removes the on-device cache and preferences.
+No, because there is nothing of ours to delete: the coordinates go to the
+weather service and to no server of ours. Clearing the app's storage in
+Android's settings, or uninstalling it, removes the saved places, the cache
+and the preferences.
 
 ## Independent security review
 
@@ -61,9 +75,13 @@ No.
 
 | Section | Answer |
 |---|---|
-| Data collection and security: collects or shares | No |
+| Data collection and security: collects or shares | Yes |
 | Data encrypted in transit | Yes |
-| Users can request deletion | Not applicable, nothing is collected |
-| Location | Not collected (processed on device, on request) |
+| Users can request deletion | No |
+| Location: approximate location | Collected, not shared |
+| Approximate location: processed ephemerally | No |
+| Approximate location: required or optional | Optional, users can choose |
+| Approximate location: why collected | App functionality |
+| Location: precise location | Not collected |
 | Personal info, financial info, health, messages, photos, audio, files, calendar, contacts, activity, browsing, identifiers, installed apps, other | Not collected |
 | Ads | None |

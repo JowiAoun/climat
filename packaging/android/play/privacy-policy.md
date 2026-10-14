@@ -5,8 +5,9 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
 # Climat privacy policy
 
-Climat is a weather app. This page says what it does with your data, which is
-very little, and it is short because there is little to say.
+Climat is a weather app, written and published by Jowi Aoun. This page says
+what it does with your data, which is very little, and it is short because
+there is little to say.
 
 ## What Climat sends
 
@@ -40,9 +41,9 @@ name instead.
 
 ## What Climat stores
 
-Your preferences and a copy of the last forecast, in the app's private
-storage on your phone. Uninstalling the app removes them. Nothing is stored
-anywhere else.
+Your preferences, the places you have chosen and a copy of the last forecast,
+in the app's private storage on your phone. Uninstalling the app removes them.
+Nothing is stored anywhere else.
 
 ## What Climat does not do
 
@@ -57,4 +58,4 @@ the project's repository, which is public.
 ## Contact
 
 Open an issue at https://github.com/JowiAoun/climat/issues, or write to the
-address in the package's Maintainer field.
+contact address on the app's Google Play page.
