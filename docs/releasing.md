@@ -149,16 +149,60 @@ one. Losing the Play signing key is not possible, because Google holds it.
 That is the reason to enrol in Play App Signing on the first upload, and the
 console makes it the default.
 
-### The first upload
+### What Google asks for first
 
-1. Create the app in the Play Console with the name, package name and
-   category from `packaging/android/play/listing.md`.
-2. Fill in the store listing from the same file, the data safety form from
-   `data-safety.md`, and point the privacy policy at the published
-   `privacy-policy.md`.
-3. Upload `climat-X.Y.Z-android-arm64-v8a.aab` from the GitHub release to an
-   internal testing track first. Install it on a phone from the testing link.
-4. Promote it to production when it has been on a phone.
+- **A developer account.** US$25, paid once, by a credit or debit card in
+  your legal name. Google may also ask for a government ID, and a new
+  personal account confirms it has an Android phone through the Play Console
+  app.
+- **A closed test.** A personal account made after 13 November 2023 cannot
+  publish to production until the app has had a closed test with at least 12
+  testers opted in for 14 days in a row. Invite more than 12: the count is
+  checked every day, and a tester who leaves restarts it.
+
+### The first upload, by hand
+
+Play's API cannot create an app, and it cannot take an app's first bundle, so
+these steps are in the Play Console:
+
+1. Create the app with the name, package name, language and category from
+   `packaging/android/play/listing.md`.
+2. Fill in the forms under "App content": the privacy policy URL from
+   `listing.md`, app access (everything works without a login), ads (none),
+   the content rating and the target audience from `listing.md`, and the
+   data safety form from `data-safety.md`.
+3. Upload `climat-X.Y.Z-android-arm64-v8a.aab` from the GitHub release to
+   internal testing. Accept Play App Signing when the Console offers it.
+4. Install it on a phone from the testing link.
+
+### Uploads after that
+
+The release workflow's `play` job sends every tagged bundle to Play, with the
+release note as "What's new" and the listing's text and pictures beside it.
+It does nothing until it has a key:
+
+1. In Google Cloud, make a project, enable the Google Play Android Developer
+   API, and make a service account with a JSON key.
+2. In the Play Console, under "Users and permissions", invite the service
+   account's address and give it, for this app: release to testing tracks,
+   manage testing tracks, and edit the store listing. Add release to
+   production when you want the workflow to promote there.
+3. Run `gh secret set PLAY_SERVICE_ACCOUNT_JSON --env google-play < key.json`,
+   then delete `key.json`.
+4. Set the repository variable `PLAY_TRACK` if internal testing is not the
+   track you want: `alpha` is the closed test, `production` is the store.
+   While the app has never been rolled out, set `PLAY_RELEASE_STATUS` to
+   `draft`, because Play refuses anything else for a draft app.
+
+`google-play` is a GitHub environment, so it can require a reviewer before
+anything reaches the store (Settings, Environments).
+
+The `google play` workflow does the two jobs between releases, from the
+Actions tab: `listing` sends the store text and pictures as they are on
+`main`, and `promote` moves this version's release to another track, such as
+from the closed test to production, to all users or to a fraction of them.
+`scripts/play.sh` is the same thing from a laptop, inside
+`nix develop .#play`.
 
 The version code Play sees is computed from the version in `CMakeLists.txt`
 (`0.1.0` is `100`), so a release bump moves it and nothing has to be typed.
@@ -176,6 +220,7 @@ scripts/licence-bundle.sh       # THIRD-PARTY-LICENCES.txt
 scripts/android.sh deps         # once: Qt for Android, the SDK and the NDK
 scripts/android.sh openssl      # once per OpenSSL bump
 scripts/android.sh aab          # the bundle; unsigned unless the key variables are set
+scripts/play.sh check           # the Play listing against Play's limits
 nix develop --command actionlint
 ```
 

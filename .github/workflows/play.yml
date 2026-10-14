@@ -1,0 +1,80 @@
+# SPDX-FileCopyrightText: 2026 Jowi Aoun
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Google Play, by hand, for what happens between releases.
+#
+#   listing   send the store text, the icon and the screenshots as they are on
+#             the branch it runs on, without a new bundle
+#   promote   move this version's release from one track to another: internal
+#             to closed testing, or closed testing to production
+#
+# A release uploads its bundle by itself, from release.yml's `play` job. This
+# is for the steps after that, which are a person's decision and not a tag's.
+# Both go through scripts/play.sh, so either can also be run from a laptop.
+#
+# Every `uses:` is a commit hash and the checkout keeps no credential, for the
+# reasons ci.yml gives.
+name: google play
+
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: What to send
+        type: choice
+        options: [listing, promote]
+        default: listing
+      from:
+        description: 'promote: the track the release is on now'
+        type: choice
+        options: [internal, alpha, beta]
+        default: internal
+      to:
+        description: 'promote: the track to move it to (alpha is closed testing)'
+        type: choice
+        options: [alpha, beta, production]
+        default: production
+      rollout:
+        description: 'promote: a fraction of users, such as 0.2, or empty for all of them'
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: google-play
+  cancel-in-progress: false
+
+jobs:
+  play:
+    name: Google Play (${{ inputs.task }})
+    runs-on: ubuntu-latest
+    environment:
+      name: google-play
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: The listing still fits
+        run: nix develop .#play --command bash scripts/play.sh check
+
+      - name: Send it
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          PLAY_TRACK: ${{ vars.PLAY_TRACK || 'internal' }}
+          PLAY_ROLLOUT: ${{ inputs.rollout }}
+          TASK: ${{ inputs.task }}
+          FROM: ${{ inputs.from }}
+          TO: ${{ inputs.to }}
+        run: |
+          case "$TASK" in
+            listing) nix develop .#play --command bash scripts/play.sh listing ;;
+            promote) nix develop .#play --command bash scripts/play.sh promote "$FROM" "$TO" ;;
+          esac
