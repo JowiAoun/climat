@@ -534,6 +534,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Search for a place, or use your location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Feels like</source>
         <translation type="unfinished"></translation>
     </message>
@@ -840,6 +844,13 @@
     </message>
 </context>
 <context>
+    <name>LocationBar</name>
+    <message>
+        <source>Choose a place</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Main</name>
     <message>
         <source>Climat</source>
@@ -998,6 +1009,10 @@
     </message>
     <message>
         <source>Getting the forecast</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search for a place, or use your location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

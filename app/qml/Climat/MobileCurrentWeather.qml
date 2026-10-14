@@ -101,7 +101,9 @@ Item {
               // The first run, before there is anything to be stale: the one
               // moment the card is empty, and it says why rather than sitting
               // blank for the length of the retries.
-              !Engine.hasData && Engine.loading ? qsTr("Getting the forecast") : ""]
+              !Engine.hasData && Engine.loading ? qsTr("Getting the forecast") : "",
+              // The very first run, before there is a place to ask about.
+              Engine.hasPlace ? "" : qsTr("Search for a place, or use your location")]
             .filter(function (s) { return s !== "" }).join("  ·  ")
         color: Engine.stale || Engine.problem !== "" ? Theme.state.caution
                                                      : Theme.ink.muted

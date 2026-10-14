@@ -12,7 +12,9 @@ import QtQuick.Shapes
 Item {
     id: root
 
-    property string label: Detail.location.label
+    // Before the first place is chosen the bar says what to do, and tapping
+    // it opens the picker that does it.
+    property string label: Engine.hasPlace ? Detail.location.label : qsTr("Choose a place")
     property bool isHome: Detail.location.isHome
 
     // Whether the picker this bar opens is currently up. Bound from outside -
@@ -69,6 +71,18 @@ Item {
             color: Theme.ink.primary
             font.pixelSize: Theme.type.sectionTitle
             anchors.verticalCenter: parent.verticalCenter
+
+            // The name opens the picker too. "Choose a place" reads as a
+            // button, and a first tap on it that did nothing was the first
+            // thing a new reader met on a phone. As tall as the chevron's
+            // cell, so it clears the same touch floor.
+            Item {
+                width: parent.width
+                height: Theme.metric.hitMin
+                anchors.verticalCenter: parent.verticalCenter
+                HoverHandler { cursorShape: Qt.PointingHandCursor }
+                TapHandler { onTapped: root.changeRequested() }
+            }
         }
 
         // ---- disclosure chevron ------------------------------------------
