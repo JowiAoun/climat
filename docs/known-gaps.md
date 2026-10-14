@@ -187,16 +187,19 @@ whatever it finds, or deciding that a touch device never gets the desktop page
 
 ---
 
-## `SafeArea` is a constant, not a measurement
+## `SafeArea` is a constant below Qt 6.9
 
 `Theme.metric.navSafeArea` is 12 px, and on a real phone the gesture strip is
-whatever the device says it is. Qt exposes that as the `SafeArea` attached
-property in 6.9; this project's floor is 6.8, so the constant stands in.
+whatever the device says it is. Qt reports that from 6.9, as
+`QWindow::safeAreaMargins()`; this project's floor is 6.8.
 
-The constant is not only a stopgap. The gallery's device frames are drawn
-against it, and golden images need a number that does not depend on which
-handset the capture ran on. When `SafeArea` arrives, the app should read it and
-the gallery should keep the constant.
+**Status: measured on 6.9 and later, the constant below that.** The app reads
+the margins through `WindowInsets` (`app/platform/windowinsets.h`), which is
+zero on a desktop and on Qt 6.8. The nav bar takes the larger of the
+constant and the measured strip, and the pages and sheets move down by the
+status bar. The Android package is built against 6.11, so a phone gets the
+measurement. The gallery's device frames and the golden images keep the
+constant, because they need a number that does not depend on the handset.
 
 ---
 

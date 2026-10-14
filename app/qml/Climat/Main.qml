@@ -288,6 +288,10 @@ Window {
         // never starts.
         Alerts.setWindowState(win.exposed, win.active)
 
+        // The status bar and the gesture strip, on a phone that draws this
+        // window under them. Zero on a desktop.
+        WindowInsets.watch(win)
+
         if (win.geometryRemembered && Settings.hasWindowSize) {
             // Size only. Position is stored, and restoring it is a lie on
             // Wayland - the compositor places windows, and a client that

@@ -137,9 +137,9 @@ Item {
     // the crime of turning the device.
     Loader {
         id: pageLoader
-        x: root.railed ? nav.width : 0
+        x: root.railed ? nav.x + nav.width : 0
         y: 0
-        width: root.width - (root.railed ? nav.width : 0)
+        width: root.width - x
         height: root.height - (root.railed ? 0 : nav.height)
 
         source: root.currentTab.page
@@ -158,6 +158,13 @@ Item {
 
         onStatusChanged: if (status === Loader.Error)
             console.warn("mobile shell: could not load", source)
+    }
+
+    // The status bar and the gesture strip move when the phone turns, and the
+    // first answer arrives after the first page has loaded.
+    Connections {
+        target: WindowInsets
+        function onChanged() { root.pushLayout(pageLoader.item) }
     }
 
     // ---- shell state, page state -------------------------------------------
@@ -204,9 +211,10 @@ Item {
         if (page === null)
             return
         if (page.bottomInset !== undefined)
-            page.bottomInset = root.railed ? 0 : nav.height
+            page.bottomInset = root.railed ? WindowInsets.bottom : nav.height
         if (page.topInset !== undefined)
-            page.topInset = banner.visible ? banner.height + Theme.metric.mobileGap : 0
+            page.topInset = WindowInsets.top
+                            + (banner.visible ? banner.height + Theme.metric.mobileGap : 0)
         if (page.viewportClass !== undefined)
             page.viewportClass = root.viewportClass
     }
@@ -287,7 +295,7 @@ Item {
     AlertBanner {
         id: banner
         x: pageLoader.x + Theme.metric.mobileMargin
-        y: Theme.metric.mobileMargin
+        y: WindowInsets.top + Theme.metric.mobileMargin
         width: pageLoader.width - Theme.metric.mobileMargin * 2
         onOpened: sheet.open = true
 
@@ -329,10 +337,14 @@ Item {
     ShellNav {
         id: nav
         orientation: root.railed ? Qt.Vertical : Qt.Horizontal
-        x: 0
-        y: root.railed ? 0 : root.height - height
+        // A rail keeps clear of the status bar above it, the gesture strip
+        // below it and a camera cutout beside it. A bar's own padding takes
+        // the strip; see ShellNav.
+        x: root.railed ? WindowInsets.left : 0
+        y: root.railed ? WindowInsets.top : root.height - height
         width: root.railed ? implicitWidth : root.width
-        height: root.railed ? root.height : implicitHeight
+        height: root.railed ? root.height - WindowInsets.top - WindowInsets.bottom
+                            : implicitHeight
         currentId: root.tab
         onSelected: function (id) { root.tab = id }
     }

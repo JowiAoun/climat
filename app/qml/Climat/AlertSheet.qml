@@ -69,10 +69,12 @@ Item {
     Rectangle {
         id: panel
         width: Math.min(parent.width - 32, 520)
-        height: Math.min(parent.height - 64, 32 + content.implicitHeight + 20)
+        height: Math.min(parent.height - 64 - WindowInsets.top - WindowInsets.bottom,
+                         32 + content.implicitHeight + 20)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: Math.min(56, parent.height * 0.06)
+        // Below the status bar on a phone that draws this window under it.
+        anchors.topMargin: WindowInsets.top + Math.min(56, parent.height * 0.06)
         radius: Theme.metric.cardRadius
 
         // Opaque, the same §10.1 exception PlacePicker takes and for the same

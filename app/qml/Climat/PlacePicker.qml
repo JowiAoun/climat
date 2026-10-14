@@ -82,10 +82,12 @@ Item {
     Rectangle {
         id: panel
         width: Math.min(parent.width - 32, 420)
-        height: Math.min(parent.height - 64, 30 + column.implicitHeight + 20)
+        height: Math.min(parent.height - 64 - WindowInsets.top - WindowInsets.bottom,
+                         30 + column.implicitHeight + 20)
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: Math.min(72, parent.height * 0.08)
+        // Below the status bar on a phone that draws this window under it.
+        anchors.topMargin: WindowInsets.top + Math.min(72, parent.height * 0.08)
         radius: Theme.metric.cardRadius
 
         // OPAQUE, which is a deliberate exception to §10.1's rule that a

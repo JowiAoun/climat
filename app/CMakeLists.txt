@@ -245,6 +245,11 @@ set(climat_cpp_sources
     platform/systemappearance.h
     platform/systemappearance.cpp
 
+    # How much of the window the status bar and the gesture strip cover. Zero
+    # on a desktop and before Qt 6.9; see the header.
+    platform/windowinsets.h
+    platform/windowinsets.cpp
+
     # A warning for the reader who is not looking at the window. Not a
     # QML_ELEMENT - nothing in QML constructs one; AlertsData owns the only
     # instance and decides what is worth interrupting somebody for. Here

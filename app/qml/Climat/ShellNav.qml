@@ -72,10 +72,11 @@ Item {
     // a system gesture area on a landscape device is along the bottom, which
     // for a rail is its far end rather than its leading edge, and 12 px of
     // padding there would push the fifth destination up for no reason. The
-    // real answer on Android is SafeArea, which needs Qt 6.9 and is above this
-    // project's floor; `navSafeArea` is the deterministic stand-in that the
-    // gallery's device frames are measured against.
-    readonly property real safeArea: rail ? 0 : Theme.metric.navSafeArea
+    // phone's own strip when it reports one, which a Qt 6.9 build on Android
+    // does; `navSafeArea` otherwise, the deterministic stand-in that the
+    // gallery's device frames and the golden images are measured against.
+    readonly property real safeArea: rail ? 0 : Math.max(Theme.metric.navSafeArea,
+                                                         WindowInsets.bottom)
 
     signal selected(string id)
 
