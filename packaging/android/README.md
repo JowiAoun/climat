@@ -14,10 +14,13 @@ it. `scripts/android.sh` is the build; `docs/releasing.md` is the release.
 
 ## Files
 
-- `AndroidManifest.xml`: Qt 6.11.1's template with one edit, the icon. Qt's
-  CMake has no property for the launcher icon, so the manifest has to name
-  it. The package name, version code, version name and permissions stay as
-  `%%INSERT_…%%` placeholders and are filled in from `app/CMakeLists.txt`.
+- `AndroidManifest.xml`: Qt 6.11.1's template with three edits. The icon,
+  because Qt's CMake has no property for the launcher icon. Three permissions
+  Qt's own modules add and this app does not use, taken back out. And
+  location hardware marked optional, so Play does not hide the app from a
+  device without it. The package name, version code, version name and
+  permissions stay as `%%INSERT_…%%` placeholders and are filled in from
+  `app/CMakeLists.txt`.
 - `res/mipmap-anydpi-v26/ic_launcher.xml`: the adaptive icon, two layers the
   launcher composes and masks itself on Android 8 and later.
 - `res/mipmap-<density>/ic_launcher.png`: the square icon for Android 7 and
@@ -47,7 +50,8 @@ PNG by hand.
 ## When Qt's template changes
 
 Diff this manifest against the one in the Android kit and carry over what
-moved. The `android:icon` line is the only thing that is ours.
+moved. The `android:icon` line, the three removed permissions and the
+`uses-feature` line are ours.
 
 ```sh
 diff ~/Qt/6.11.1/android_arm64_v8a/src/android/templates/AndroidManifest.xml \

@@ -3,9 +3,11 @@
   SPDX-FileCopyrightText: 2026 Jowi Aoun
   SPDX-License-Identifier: GPL-3.0-or-later
 
-  Qt 6.11.1's own manifest template, with one change: the application icon
-  points at the adaptive icon in res/ instead of the "%%INSERT_APP_ICON%%"
-  placeholder, because Qt's CMake has no property that sets it. Every other
+  Qt 6.11.1's own manifest template, with three changes, each explained where
+  it is. The application icon points at the adaptive icon in res/ instead of
+  the "%%INSERT_APP_ICON%%" placeholder, because Qt's CMake has no property
+  that sets it. Three permissions Qt adds are removed, and location hardware
+  is marked optional. Every other
   placeholder is filled in by androiddeployqt from app/CMakeLists.txt - the
   package name, the version code and name, the permissions - and stays a
   placeholder here so that there is exactly one place each of those is written.
@@ -30,6 +32,10 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" tools:node="remove" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove" />
+    <!-- The location permission makes Google Play treat location hardware as
+         required, and Play then hides the app from any device without it. A
+         place typed into the search works on every device, so it is optional. -->
+    <uses-feature android:name="android.hardware.location" android:required="false" />
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"
