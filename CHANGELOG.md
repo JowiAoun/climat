@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.2.0](https://github.com/JowiAoun/climat/compare/v0.1.0...v0.2.0) (2026-10-14)
+
+
+### Features
+
+* **libclimat:** average three models for a Canadian forecast ([6a4239b](https://github.com/JowiAoun/climat/commit/6a4239b9df868839e8820f35d9aab62fc7beb82e))
+
+
+### Fixes
+
+* **alerts:** credit ECCC under the licence its data servers use ([c3ad622](https://github.com/JowiAoun/climat/commit/c3ad622bddf09f0a6b9f09fd51d2dfe7a5d6f684))
+* **android:** keep pages clear of the status bar and gesture strip ([4d0367f](https://github.com/JowiAoun/climat/commit/4d0367f7d59a147895e2bc165c3bab33d38f7cd5))
+* **android:** make use my location work on a phone ([5c11b89](https://github.com/JowiAoun/climat/commit/5c11b894055d4c9f289e46c1a4c95a98661b505c))
+* **android:** mark location hardware optional so play lists the app ([cc2538e](https://github.com/JowiAoun/climat/commit/cc2538e9e7ce057277be6ccbe035f792dbd5078d))
+* **app:** ask for a place on the first launch ([b6bf642](https://github.com/JowiAoun/climat/commit/b6bf642c62df177016c5cddd4090bdc664a5bab4))
+* **ci:** name the appimage with the version like every other artefact ([f278988](https://github.com/JowiAoun/climat/commit/f27898855fcb9df7ef8d4d333bdec95bf0128c47))
+
+
+### Documentation
+
+* **android:** declare approximate location in the data safety answers ([12fca0c](https://github.com/JowiAoun/climat/commit/12fca0c5650489fab3fd0041575ca92b80ba0768))
+* record that 0.1.0 is out and point at it ([9493688](https://github.com/JowiAoun/climat/commit/94936881e46f33f9e5f8e283b6aee9d419463d8d))
+
 ## 0.1.0 (2026-09-30)
 
 
