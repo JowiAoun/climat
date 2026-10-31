@@ -188,11 +188,13 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             spacing: 2
                             Text {
+                                textFormat: Text.PlainText
                                 text: result.label
                                 color: Theme.ink.primary
                                 font.pixelSize: Theme.type.status
                             }
                             Text {
+                                textFormat: Text.PlainText
                                 text: result.region
                                 color: Theme.ink.muted
                                 font.pixelSize: Theme.type.label
@@ -262,12 +264,14 @@ Item {
                             anchors.verticalCenter: parent.verticalCenter
                             spacing: 2
                             Text {
+                                textFormat: Text.PlainText
                                 text: saved.label
                                 color: saved.index === Engine.places.currentIndex
                                            ? Theme.accent.fill : Theme.ink.primary
                                 font.pixelSize: Theme.type.status
                             }
                             Text {
+                                textFormat: Text.PlainText
                                 text: saved.region
                                 color: Theme.ink.muted
                                 font.pixelSize: Theme.type.label

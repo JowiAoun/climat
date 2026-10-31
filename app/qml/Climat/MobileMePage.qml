@@ -85,6 +85,7 @@ MobilePage {
         }
 
         Text {
+            textFormat: Text.PlainText
             text: settingRow.text
             color: Theme.ink.primary
             font.pixelSize: Theme.type.status

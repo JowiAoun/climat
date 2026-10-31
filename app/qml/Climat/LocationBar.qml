@@ -67,6 +67,7 @@ Item {
             // the Row no longer provides. Right-padded rather than spaced,
             // because the two gaps in this bar are now different on purpose.
             rightPadding: 10
+            textFormat: Text.PlainText
             text: root.label
             color: Theme.ink.primary
             font.pixelSize: Theme.type.sectionTitle

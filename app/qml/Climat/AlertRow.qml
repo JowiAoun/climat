@@ -89,6 +89,7 @@ Item {
                     color: root.tones.ink
                     font.pixelSize: Theme.type.detailTitle
                     font.weight: Font.DemiBold
+                    textFormat: Text.PlainText
 
                     // The headline where there is one, the event name where
                     // there is not. ECCC publishes no headline at all, and
@@ -106,6 +107,7 @@ Item {
                 wrapMode: Text.WordWrap
                 color: Theme.ink.muted
                 font.pixelSize: Theme.type.label
+                textFormat: Text.PlainText
                 text: {
                     if (!root.alert)
                         return ""

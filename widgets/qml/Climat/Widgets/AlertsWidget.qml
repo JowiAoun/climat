@@ -86,6 +86,7 @@ WidgetSurface {
 
             Text {
                 width: parent.width
+                textFormat: Text.PlainText
                 text: root.worst.event !== undefined ? root.worst.event : ""
                 color: Theme.ink.primary
                 font.pixelSize: Theme.type.label
@@ -102,6 +103,7 @@ WidgetSurface {
             // in words would cost the line that says which county.
             Text {
                 width: parent.width
+                textFormat: Text.PlainText
                 text: {
                     var area = root.worst.areaDescription !== undefined
                                ? root.worst.areaDescription : ""

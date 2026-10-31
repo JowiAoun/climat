@@ -193,6 +193,7 @@ Rectangle {
             anchors.leftMargin: 8
             horizontalAlignment: Text.AlignRight
             elide: Text.ElideRight
+            textFormat: Text.PlainText
             text: Wire.obj(Wire.at(root.snap, "place")).name !== undefined
                   ? Wire.obj(Wire.at(root.snap, "place")).name : ""
             color: Theme.ink.dim

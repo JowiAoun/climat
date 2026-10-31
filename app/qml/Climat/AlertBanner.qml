@@ -182,6 +182,7 @@ Item {
                 color: root.tones.ink
                 font.pixelSize: Theme.type.label
                 font.weight: Font.DemiBold
+                textFormat: Text.PlainText
                 text: root.moreCount > 0
                       //: %1 is an alert name, %2 a count of further alerts
                       ? qsTr("%1 · +%2 more").arg(root.eventName).arg(root.moreCount)
@@ -231,6 +232,7 @@ Item {
                     color: root.tones.ink
                     font.pixelSize: Theme.type.cardTitle
                     font.weight: Font.DemiBold
+                    textFormat: Text.PlainText
                     text: root.eventName
                 }
 
@@ -335,6 +337,7 @@ Item {
                 elide: Text.ElideRight
                 color: Theme.ink.muted
                 font.pixelSize: Theme.type.body
+                textFormat: Text.PlainText
                 text: {
                     if (!root.alert)
                         return ""
