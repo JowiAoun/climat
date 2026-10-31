@@ -30,6 +30,7 @@
 #include "appengine.h"
 #include "appfont.h"
 #include "galleryoptions.h"
+#include "qmlnetworkguard.h"
 #include "settings.h"
 
 #include "climatconfig.h"
@@ -83,7 +84,10 @@ int main(int argc, char *argv[])
     // looks the same in the product.
     AppEngine::instance()->configure(climat::fixtures::defaultName());
 
+    // The guard is declared first so it outlives the engine. See its header.
+    QmlNetworkGuard networkGuard;
     QQmlApplicationEngine engine;
+    engine.setNetworkAccessManagerFactory(&networkGuard);
 
     // A QML file that fails to construct its root object leaves the engine
     // holding nothing and the event loop with no window to show - the process

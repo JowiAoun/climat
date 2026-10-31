@@ -121,7 +121,8 @@ endforeach()
 # second place for °F, or for a 24-hour clock, to be wrong.
 # `SystemAppearance` because a tile follows the desktop's light/dark preference
 # like everything else on it. `ScreenshotController` because `--grab` is what
-# makes a tile reviewable in CI without a session bus.
+# makes a tile reviewable in CI without a session bus. `QmlNetworkGuard`
+# because a tile shows the place name too, and it keeps QML off the network.
 #
 # None of the four reaches libclimat. That is checked, not assumed:
 # `widget_has_no_engine` in tests/CMakeLists.txt reads this binary's symbols.
@@ -149,6 +150,8 @@ set(climat_widget_sources
     ${CMAKE_SOURCE_DIR}/app/platform/systemappearance.cpp
     ${CMAKE_SOURCE_DIR}/app/devtools/screenshotcontroller.h
     ${CMAKE_SOURCE_DIR}/app/devtools/screenshotcontroller.cpp
+    ${CMAKE_SOURCE_DIR}/app/platform/qmlnetworkguard.h
+    ${CMAKE_SOURCE_DIR}/app/platform/qmlnetworkguard.cpp
 
     # Three files out of libclimat rather than the whole archive. All three are
     # pure functions over QString and double with no I/O, no cache and no

@@ -257,6 +257,11 @@ set(climat_cpp_sources
     # above, and its D-Bus half compiles out the same way.
     platform/notifier.h
     platform/notifier.cpp
+
+    # A network access manager for the QML engine that refuses the network.
+    # Not a QML type; main() hands it to the engine. See the header.
+    platform/qmlnetworkguard.h
+    platform/qmlnetworkguard.cpp
 )
 
 # ---- the typeface -----------------------------------------------------------

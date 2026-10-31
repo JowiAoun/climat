@@ -41,6 +41,7 @@
 #include "appfont.h"
 #include "daemonlink.h"
 #include "layershell.h"
+#include "qmlnetworkguard.h"
 #include "settings.h"
 #include "widgetconfig.h"
 #include "widgetoptions.h"
@@ -91,7 +92,10 @@ int main(int argc, char *argv[])
     else
         DaemonLink::instance()->useSnapshotFile(snapshot);
 
+    // The guard is declared first so it outlives the engine. See its header.
+    QmlNetworkGuard networkGuard;
     QQmlApplicationEngine engine;
+    engine.setNetworkAccessManagerFactory(&networkGuard);
     QObject::connect(
         &engine, &QQmlApplicationEngine::objectCreationFailed, &app,
         []() { QCoreApplication::exit(-1); },

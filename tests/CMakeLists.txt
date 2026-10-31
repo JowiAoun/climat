@@ -309,6 +309,21 @@ set_tests_properties(tst_forecastdata PROPERTIES
     TIMEOUT 60
 )
 
+# ---- and QML kept off the network --------------------------------------------
+#
+# Registered by hand for the same reason: the guard lives in app/platform and
+# the test needs a QML engine, which climat_forbid_gui() would refuse.
+add_executable(tst_qmlnetworkguard tst_qmlnetworkguard.cpp)
+
+target_link_libraries(tst_qmlnetworkguard PRIVATE climatqml Qt6::Test)
+
+add_test(NAME tst_qmlnetworkguard COMMAND tst_qmlnetworkguard)
+
+set_tests_properties(tst_qmlnetworkguard PROPERTIES
+    ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_FORCE_STDERR_LOGGING=1;LC_ALL=C.UTF-8;TZ=UTC"
+    TIMEOUT 60
+)
+
 # ---- the other two that link app/ -------------------------------------------
 #
 # `TimeFormat`'s five spellings and `Units`' two presets. Here rather than
