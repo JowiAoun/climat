@@ -128,11 +128,13 @@ attempted; in the meantime every release carries `SHA256SUMS` and GitHub build
 provenance:
 
 ```sh
-gh attestation verify climat-0.1.0-windows-x64.msi --repo JowiAoun/climat
+gh attestation verify climat-0.1.0-windows-x64.msi --repo JowiAoun/climat \
+  --source-ref refs/tags/v0.1.0 \
+  --signer-workflow JowiAoun/climat/.github/workflows/release.yml
 ```
 
 That proves the file came out of this repository's release workflow at a named
-commit. It is weaker than a signature in one way (Windows does not
+commit. The last two flags make it fail for a test build made from a branch. It is weaker than a signature in one way (Windows does not
 check it) and stronger in another, since it names the source revision.
 
 ## What it looks like
