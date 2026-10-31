@@ -86,6 +86,7 @@ private Q_SLOTS:
     void nwsCarriesANullEndsAsInvalidRatherThanSubstituting();
     void nwsIdentityIsTheOwnIdPlusEveryReference();
     void nwsTwoAirQualityAlertsStayTwo();
+    void nwsKeepsTheLinkOnlyWhenItIsAWebPage();
     void nwsSendsLatitudeFirstInOneParameter();
     void nwsOutOfBoundsIsUnsupportedAndNotAFailure();
 
@@ -414,6 +415,26 @@ void TestAlertProviders::nwsTwoAirQualityAlertsStayTwo()
                      "two distinct air quality alerts were merged into one");
         }
     }
+}
+
+void TestAlertProviders::nwsKeepsTheLinkOnlyWhenItIsAWebPage()
+{
+    const QByteArray body = fixture(QStringLiteral("nws/seattle-four.json"));
+
+    const Result<AlertSet> asSent = NwsAlertProvider::parse(body, kNow);
+    QVERIFY(asSent.hasValue());
+    QCOMPARE(asSent.value().alerts.constFirst().web, QUrl(QStringLiteral("http://www.weather.gov")));
+
+    // The same feed with its link swapped for one that is not a web page.
+    QByteArray tampered = body;
+    tampered.replace("\"web\": \"http://www.weather.gov\"", "\"web\": \"file:///etc/passwd\"");
+    QVERIFY(tampered != body);
+
+    const Result<AlertSet> parsed = NwsAlertProvider::parse(tampered, kNow);
+    QVERIFY(parsed.hasValue());
+    QCOMPARE(parsed.value().alerts.size(), 4);
+    for (const Alert &alert : parsed.value().alerts)
+        QVERIFY(alert.web.isEmpty());
 }
 
 void TestAlertProviders::nwsSendsLatitudeFirstInOneParameter()

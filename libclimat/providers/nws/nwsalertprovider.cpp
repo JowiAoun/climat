@@ -339,9 +339,12 @@ Result<AlertSet> NwsAlertProvider::parse(const QByteArray &body, const QDateTime
         // is where that is handled; nothing is substituted here.
         alert.ends = instant(properties.value(QStringLiteral("ends")));
 
-        const QString web = properties.value(QStringLiteral("web")).toString();
-        if (!web.isEmpty())
-            alert.web = QUrl(web);
+        // A web page or nothing. Nothing opens this link today, and the day
+        // something does, it should not be handed a file: or intent: URL that
+        // came off a feed.
+        const QUrl web(properties.value(QStringLiteral("web")).toString());
+        if (web.scheme() == QLatin1String("https") || web.scheme() == QLatin1String("http"))
+            alert.web = web;
 
         // Identity: own id, plus every id this message supersedes. The header
         // has the two fixtures that decided this shape.
