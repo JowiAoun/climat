@@ -72,7 +72,15 @@ int main(int argc, char *argv[])
     //
     // Does not return for --help, --version, an unknown flag or a malformed
     // value.
+    //
+    // Not on Android. There the command line comes from the intent that
+    // started the app, and any installed app can send one: it could make a
+    // `--grab` overwrite Climat's own settings, or a `--fixture` replace the
+    // reader's home place. A phone has no use for these flags, so it keeps
+    // every default.
+#ifndef Q_OS_ANDROID
     AppOptions::parseCommandLine(app);
+#endif
 
     // ---- 5. the weather ----------------------------------------------------
     // Before the QML engine, and that is the whole reason this line is here
