@@ -423,29 +423,12 @@ jobs:
       - name: Version
         run: bash scripts/release-version.sh >> "$GITHUB_ENV"
 
-      # The keystore is a file, and a secret is a string, so it travels as
-      # base64 and is written to the runner's temp directory - never into the
-      # checkout, where a later step could catalogue it. The three strings
-      # beside it go straight to the build step's environment, which is where
-      # Qt reads them.
-      - name: The upload key, when there is one
-        env:
-          KEYSTORE_BASE64: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 }}
-        run: |
-          if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/upload.keystore"
-            echo "QT_ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/upload.keystore" >> "$GITHUB_ENV"
-          else
-            echo "::warning::No ANDROID_UPLOAD_KEYSTORE_BASE64 secret, so the bundle is unsigned and Play will not take it. docs/releasing.md says how to add the key."
-          fi
-
+      # Unsigned. This job runs pip, Gradle, Maven and the Qt installer, so the
+      # upload key is never in it. `android-sign` below signs what it made.
       - name: Build the bundle and the APK
         env:
           CLIMAT_QT_ANDROID: ${{ env.QT_ROOT_DIR }}
           CLIMAT_QT_HOST: ${{ env.QT_ROOT_DIR }}/../gcc_64
-          QT_ANDROID_KEYSTORE_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
-          QT_ANDROID_KEYSTORE_STORE_PASS: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_PASSWORD }}
-          QT_ANDROID_KEYSTORE_KEY_PASS: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
         run: |
           scripts/android.sh aab
           scripts/android.sh apk
@@ -457,19 +440,85 @@ jobs:
             "climat-$CLIMAT_RELEASE_VERSION-android-arm64-v8a.aab"
           cp "$out/climat.apk" "climat-$CLIMAT_RELEASE_VERSION-android-arm64-v8a.apk"
           cp build/android-openssl/LICENSE-OpenSSL.txt .
-          if jarsigner -verify "climat-$CLIMAT_RELEASE_VERSION-android-arm64-v8a.aab" | grep -q '^jar verified'; then
-            echo "android: the bundle is signed"
-          else
-            echo "::warning::android: the bundle is NOT signed"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: android-unsigned
+          path: |
+            *.aab
+            *.apk
+            LICENSE-OpenSSL.txt
+          if-no-files-found: error
+
+  # ---- the upload key ---------------------------------------------------------
+  #
+  # The one job that sees the four ANDROID_UPLOAD_* secrets. It has no checkout
+  # and installs nothing: it runs the JDK's jarsigner and the SDK's zipalign and
+  # apksigner, which are already on the runner image. A bad package in the
+  # build job above can change what gets signed, and the attestation still
+  # records which run made it, but it cannot read the key.
+  #
+  # The same signatures androiddeployqt used to make: the bundle with
+  # SHA256withRSA for Play, the APK with APK Signature Scheme v3 (minSdk 28
+  # needs nothing older), and 16 KB alignment checked after signing.
+  #
+  # With no keystore secret the files go through unsigned, with a warning,
+  # because an unsigned bundle is one Play will not take.
+  android-sign:
+    name: sign the .aab and .apk
+    runs-on: ubuntu-latest
+    needs: [android]
+    steps:
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: android-unsigned
+          path: out
+
+      - name: Sign
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_BASE64 }}
+          KEY_ALIAS: ${{ secrets.ANDROID_UPLOAD_KEY_ALIAS }}
+          KEYSTORE_PASS: ${{ secrets.ANDROID_UPLOAD_KEYSTORE_PASSWORD }}
+          KEY_PASS: ${{ secrets.ANDROID_UPLOAD_KEY_PASSWORD }}
+        run: |
+          cd out
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::warning::No ANDROID_UPLOAD_KEYSTORE_BASE64 secret, so the bundle is unsigned and Play will not take it. docs/releasing.md says how to add the key."
+            exit 0
           fi
+          aab=(*.aab)
+          apk=(*.apk)
+          tools="$(printf '%s\n' "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)"
+          echo "android: signing with $(basename "$tools") build tools"
+
+          # The runner's temp directory, never the workspace, where the upload
+          # step's globs could pick it up.
+          keystore="$RUNNER_TEMP/upload.keystore"
+          (umask 077 && printf '%s' "$KEYSTORE_BASE64" | base64 -d > "$keystore")
+
+          "$JAVA_HOME/bin/jarsigner" -sigalg SHA256withRSA -digestalg SHA-256 \
+            -keystore "$keystore" -storepass:env KEYSTORE_PASS -keypass:env KEY_PASS \
+            "${aab[0]}" "$KEY_ALIAS"
+          "$JAVA_HOME/bin/jarsigner" -verify "${aab[0]}" | grep -q '^jar verified'
+
+          "$tools/zipalign" -P 16 -f 4 "${apk[0]}" aligned.apk
+          "$tools/apksigner" sign --ks "$keystore" --ks-key-alias "$KEY_ALIAS" \
+            --ks-pass env:KEYSTORE_PASS --key-pass env:KEY_PASS \
+            --v4-signing-enabled false aligned.apk
+          mv aligned.apk "${apk[0]}"
+          "$tools/apksigner" verify "${apk[0]}"
+          "$tools/zipalign" -c -P 16 4 "${apk[0]}"
+
+          rm -f "$keystore"
+          echo "android: the bundle and the APK are signed"
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: android
           path: |
-            *.aab
-            *.apk
-            LICENSE-OpenSSL.txt
+            out/*.aab
+            out/*.apk
+            out/LICENSE-OpenSSL.txt
           if-no-files-found: error
 
   # ---- the screenshots a software centre shows -------------------------------
@@ -591,7 +640,7 @@ jobs:
   play:
     name: Google Play
     runs-on: ubuntu-latest
-    needs: [android]
+    needs: [android-sign]
     if: startsWith(github.ref, 'refs/tags/')
     environment:
       name: google-play
@@ -628,7 +677,7 @@ jobs:
   publish:
     name: publish
     runs-on: ubuntu-latest
-    needs: [check, deb, flatpak, appimage, windows, android]
+    needs: [check, deb, flatpak, appimage, windows, android-sign]
     permissions:
       # The release itself.
       contents: write

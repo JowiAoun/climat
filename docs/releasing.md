@@ -139,6 +139,9 @@ secrets:
 2. Run `base64 -w0 upload.keystore` and paste the output into the secret `ANDROID_UPLOAD_KEYSTORE_BASE64`.
 3. Add `ANDROID_UPLOAD_KEY_ALIAS` (`upload`), `ANDROID_UPLOAD_KEYSTORE_PASSWORD` and `ANDROID_UPLOAD_KEY_PASSWORD`.
 
+Only the `android-sign` job in `release.yml` reads these four. The job that
+builds the bundle runs Gradle, pip and the Qt installer, so it never sees them.
+
 Without the first secret the job still runs and the release still carries a
 bundle, marked unsigned in the log and on the release page. Play refuses an
 unsigned bundle, so a release cut without the key is a release that cannot be
